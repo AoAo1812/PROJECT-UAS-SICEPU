@@ -219,10 +219,10 @@ export default function FeaturesPage() {
             className="flex flex-wrap justify-center gap-4"
           >
             <Link href="/register">
-              <Button size="xl" variant="glow">Daftar Gratis</Button>
+              <Button size="lg" variant="primary">Daftar Gratis</Button>
             </Link>
             <Link href="/login">
-              <Button size="xl" variant="secondary">Masuk</Button>
+              <Button size="lg" variant="secondary">Masuk</Button>
             </Link>
           </motion.div>
         </div>

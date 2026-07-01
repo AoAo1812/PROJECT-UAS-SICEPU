@@ -2,58 +2,53 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useTranslation } from "@/lib/i18n";
+import idFaqs from "@/lib/translations/id.json";
+import enFaqs from "@/lib/translations/en.json";
+import zhFaqs from "@/lib/translations/zh.json";
+import jaFaqs from "@/lib/translations/ja.json";
+import koFaqs from "@/lib/translations/ko.json";
+import arFaqs from "@/lib/translations/ar.json";
 
-const faqs = [
-  {
-    q: "Bagaimana cara mendaftar di SICEPU?",
-    a: "Cukup klik tombol 'Daftar' pada halaman utama, masukkan nama, email kampus, dan password Anda. Akun akan langsung aktif dan siap digunakan.",
-  },
-  {
-    q: "Apakah saya bisa melaporkan lebih dari satu kerusakan?",
-    a: "Tentu! Anda bisa membuat laporan sebanyak yang diperlukan. Setiap laporan akan terpisah dan dapat dipantau statusnya secara independen.",
-  },
-  {
-    q: "Bagaimana cara melacak status laporan saya?",
-    a: "Masuk ke dashboard, klik menu 'Laporan Saya', dan Anda akan melihat status terkini dari setiap laporan yang telah dikirim. Status berubah real-time saat admin memproses.",
-  },
-  {
-    q: "Format foto apa yang didukung untuk upload?",
-    a: "SICEPU mendukung format JPEG, PNG, WebP, dan GIF dengan ukuran maksimal 5MB per foto. Anda dapat upload hingga 5 foto per laporan.",
-  },
-  {
-    q: "Berapa lama waktu respon untuk laporan yang masuk?",
-    a: "Rata-rata waktu respon kami adalah 24 jam untuk laporan masuk ke tim teknis. Untuk kerusakan darurat, proses bisa lebih cepat.",
-  },
-  {
-    q: "Apakah data saya aman di SICEPU?",
-    a: "Sangat aman. SICEPU menggunakan autentikasi JWT dengan enkripsi password bcrypt. Data Anda dilindungi dan tidak akan dibagikan ke pihak ketiga.",
-  },
-];
+const allFaqs: Record<string, Array<{ q: string; a: string }>> = {
+  id: idFaqs.faq.items,
+  en: enFaqs.faq.items,
+  zh: zhFaqs.faq.items,
+  ja: jaFaqs.faq.items,
+  ko: koFaqs.faq.items,
+  ar: arFaqs.faq.items,
+};
 
-function FaqItem({ faq, index }: { faq: (typeof faqs)[0]; index: number }) {
+const faqTitles: Record<string, { badge: string; title: string; highlight: string }> = {
+  id: { badge: "FAQ", title: "Pertanyaan", highlight: "Umum" },
+  en: { badge: "FAQ", title: "Frequently Asked", highlight: "Questions" },
+  zh: { badge: "常见问题", title: "常见", highlight: "问题" },
+  ja: { badge: "よくある質問", title: "よくある", highlight: "質問" },
+  ko: { badge: "자주 묻는 질문", title: "자주 묻는", highlight: "질문" },
+  ar: { badge: "الأسئلة الشائعة", title: "الأسئلة", highlight: "الشائعة" },
+};
+
+function FaqItem({ q, a, index }: { q: string; a: string; index: number }) {
   const [open, setOpen] = useState(false);
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
+      initial={{ opacity: 0, y: 10 }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-20px" }}
-      transition={{ duration: 0.4, delay: index * 0.05 }}
-      className="group"
+      viewport={{ once: true }}
+      transition={{ duration: 0.3, delay: index * 0.05 }}
     >
       <button
         onClick={() => setOpen(!open)}
-        className="w-full flex items-center justify-between gap-4 p-5 rounded-2xl bg-white dark:bg-slate-900/60 border border-slate-200/80 dark:border-slate-800/80 hover:border-blue-200 dark:hover:border-blue-800/50 transition-all duration-300 text-left"
+        className="w-full flex items-center justify-between gap-4 p-4 rounded-xl bg-[var(--surface)] border border-[var(--border-color)] hover:border-primary/30 transition-all duration-200 text-left"
       >
-        <span className="text-sm font-semibold text-slate-900 dark:text-white">
-          {faq.q}
-        </span>
+        <span className="text-sm font-medium text-[var(--foreground)]">{q}</span>
         <motion.div
           animate={{ rotate: open ? 180 : 0 }}
           transition={{ duration: 0.2 }}
-          className="shrink-0 w-8 h-8 rounded-lg bg-slate-100 dark:bg-slate-800 flex items-center justify-center"
+          className="shrink-0 w-7 h-7 rounded-lg bg-[var(--background)] border border-[var(--border-color)] flex items-center justify-center"
         >
-          <svg className="w-4 h-4 text-slate-500 dark:text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <svg className="w-3.5 h-3.5 text-[var(--foreground)]/40" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
           </svg>
         </motion.div>
@@ -64,13 +59,11 @@ function FaqItem({ faq, index }: { faq: (typeof faqs)[0]; index: number }) {
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
+            transition={{ duration: 0.2 }}
             className="overflow-hidden"
           >
-            <div className="px-5 pb-5 pt-2">
-              <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
-                {faq.a}
-              </p>
+            <div className="px-4 pb-4 pt-1">
+              <p className="text-xs text-[var(--foreground)]/60 leading-relaxed">{a}</p>
             </div>
           </motion.div>
         )}
@@ -80,40 +73,36 @@ function FaqItem({ faq, index }: { faq: (typeof faqs)[0]; index: number }) {
 }
 
 export default function FaqSection() {
+  const { locale } = useTranslation();
+  const faqs = allFaqs[locale] || allFaqs.id;
+  const titles = faqTitles[locale] || faqTitles.id;
+
   return (
     <section id="faq" className="py-24 relative">
       <div className="absolute inset-0 noise pointer-events-none" />
 
-      <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-50px" }}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-16"
+          viewport={{ once: true }}
+          transition={{ duration: 0.5 }}
+          className="text-center mb-12"
         >
-          <motion.span
-            initial={{ opacity: 0, scale: 0.9 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            className="inline-block text-sm font-semibold text-blue-600 dark:text-blue-400 mb-4 px-4 py-1.5 rounded-full bg-blue-50 dark:bg-blue-950/30 border border-blue-200/50 dark:border-blue-800/30"
-          >
-            FAQ
-          </motion.span>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-slate-900 dark:text-white tracking-tight">
-            Pertanyaan{" "}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">
-              Umum
+          <span className="inline-block text-xs font-medium text-primary mb-3 px-3 py-1 rounded-full bg-primary/10 border border-primary/20">
+            {titles.badge}
+          </span>
+          <h2 className="text-3xl sm:text-4xl font-bold text-[var(--foreground)] tracking-tight">
+            {titles.title}{" "}
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent">
+              {titles.highlight}
             </span>
           </h2>
-          <p className="mt-5 text-lg text-slate-600 dark:text-slate-400">
-            Temukan jawaban atas pertanyaan yang sering diajukan.
-          </p>
         </motion.div>
 
-        <div className="space-y-3">
+        <div className="space-y-2">
           {faqs.map((faq, i) => (
-            <FaqItem key={i} faq={faq} index={i} />
+            <FaqItem key={i} q={faq.q} a={faq.a} index={i} />
           ))}
         </div>
       </div>

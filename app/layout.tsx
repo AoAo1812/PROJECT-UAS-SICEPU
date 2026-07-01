@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { ThemeProvider } from "@/components/providers/ThemeProvider";
+import { I18nProvider } from "@/lib/i18n";
 import { Toaster } from "sonner";
 
 export const metadata: Metadata = {
@@ -17,15 +18,17 @@ export default function RootLayout({
     <html lang="id" suppressHydrationWarning>
       <body className="min-h-screen antialiased">
         <ThemeProvider>
-          {children}
-          <Toaster
-            position="top-right"
-            richColors
-            closeButton
-            toastOptions={{
-              className: "font-sans",
-            }}
-          />
+          <I18nProvider>
+            {children}
+            <Toaster
+              position="top-right"
+              richColors
+              closeButton
+              toastOptions={{
+                className: "font-sans",
+              }}
+            />
+          </I18nProvider>
         </ThemeProvider>
       </body>
     </html>

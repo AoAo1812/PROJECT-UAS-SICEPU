@@ -1,0 +1,187 @@
+{
+  "common": {
+    "appName": "SICEPU",
+    "loading": "Memuat...",
+    "save": "Simpan",
+    "cancel": "Batal",
+    "delete": "Hapus",
+    "edit": "Edit",
+    "back": "Kembali",
+    "search": "Cari...",
+    "noData": "Tidak ada data",
+    "submit": "Kirim",
+    "confirm": "Konfirmasi",
+    "success": "Berhasil",
+    "error": "Gagal"
+  },
+  "nav": {
+    "home": "Beranda",
+    "features": "Fitur",
+    "about": "Tentang",
+    "faq": "FAQ",
+    "contact": "Kontak",
+    "dashboard": "Dashboard",
+    "login": "Masuk",
+    "register": "Daftar",
+    "logout": "Keluar",
+    "profile": "Profil"
+  },
+  "auth": {
+    "loginTitle": "Masuk ke SICEPU",
+    "loginSubtitle": "Masukkan kredensial Anda",
+    "registerTitle": "Daftar SICEPU",
+    "registerSubtitle": "Buat akun baru",
+    "email": "Email",
+    "password": "Password",
+    "confirmPassword": "Konfirmasi Password",
+    "name": "Nama Lengkap",
+    "loginButton": "Masuk",
+    "registerButton": "Daftar",
+    "loginWithGoogle": "Masuk dengan Google",
+    "registerWithGoogle": "Daftar dengan Google",
+    "noAccount": "Belum punya akun?",
+    "hasAccount": "Sudah punya akun?",
+    "forgotPassword": "Lupa password?",
+    "or": "atau"
+  },
+  "hero": {
+    "badge": "Platform Pelaporan #1",
+    "title1": "Laporkan Kerusakan",
+    "titleHighlight": "Fasilitas Kampus",
+    "title2": "Secara Cepat",
+    "description": "SICEPU memudahkan mahasiswa dan staf untuk melaporkan kerusakan fasilitas kampus dengan cepat, transparan, dan terpantau secara real-time.",
+    "cta1": "Buat Laporan",
+    "cta2": "Masuk",
+    "trust1": "Gratis untuk mahasiswa",
+    "trust2": "Real-time tracking",
+    "trust3": "Aman & privasi"
+  },
+  "features": {
+    "badge": "Fitur",
+    "title": "Solusi Lengkap untuk",
+    "titleHighlight": "Pelaporan",
+    "subtitle": "Semua yang Anda butuhkan untuk melaporkan dan memantau kerusakan fasilitas kampus.",
+    "items": {
+      "fastReport": { "title": "Laporan Cepat", "desc": "Buat laporan kerusakan dalam hitungan menit dengan form multi-step yang intuitif." },
+      "tracking": { "title": "Real-Time Tracking", "desc": "Pantau status laporan dari Menunggu hingga Selesai dengan notifikasi otomatis." },
+      "photo": { "title": "Upload Foto", "desc": "Sertakan bukti foto kerusakan dengan drag-and-drop upload yang mendukung preview." },
+      "analytics": { "title": "Dashboard Analitik", "desc": "Visualisasi data laporan dengan grafik interaktif dan statistik lengkap." },
+      "security": { "title": "Keamanan Data", "desc": "Autentikasi JWT dengan enkripsi password bcrypt menjaga keamanan data Anda." },
+      "mobile": { "title": "Mobile Friendly", "desc": "Akses SICEPU dari perangkat apapun dengan desain responsif yang optimal." }
+    }
+  },
+  "stats": {
+    "badge": "Statistik",
+    "title": "Fitur yang",
+    "titleHighlight": "Anda Butuhkan",
+    "tracking": "Status Tracking",
+    "photos": "Foto per Laporan",
+    "response": "Rata-rata Respon",
+    "free": "Gratis untuk Kampus"
+  },
+  "timeline": {
+    "badge": "Cara Kerja",
+    "title": "Mudah dalam",
+    "titleHighlight": "4 Langkah",
+    "steps": {
+      "register": { "title": "Daftar Akun", "desc": "Buat akun gratis menggunakan email kampus Anda." },
+      "report": { "title": "Buat Laporan", "desc": "Isi form laporan dengan detail kerusakan dan upload foto." },
+      "track": { "title": "Pantau Status", "desc": "Lacak status laporan secara real-time." },
+      "done": { "title": "Selesai", "desc": "Tim teknis akan memperbaiki kerusakan." }
+    }
+  },
+  "testimonials": {
+    "badge": "Testimoni",
+    "title": "Apa Kata",
+    "titleHighlight": "Pengguna Kami"
+  },
+  "faq": {
+    "badge": "FAQ",
+    "title": "Pertanyaan",
+    "titleHighlight": "Umum",
+    "items": [
+      { "q": "Bagaimana cara mendaftar di SICEPU?", "a": "Cukup klik tombol Daftar, masukkan nama, email kampus, dan password. Akun langsung aktif." },
+      { "q": "Apakah saya bisa melaporkan lebih dari satu kerusakan?", "a": "Tentu! Anda bisa membuat laporan sebanyak yang diperlukan. Setiap laporan terpisah dan dapat dipantau statusnya." },
+      { "q": "Bagaimana cara melacak status laporan saya?", "a": "Masuk ke dashboard, klik menu Laporan Saya, dan lihat status terkini dari setiap laporan." },
+      { "q": "Format foto apa yang didukung?", "a": "JPEG, PNG, WebP, dan GIF dengan ukuran maksimal 5MB per foto. Upload hingga 5 foto per laporan." },
+      { "q": "Berapa lama waktu respon?", "a": "Rata-rata waktu respon adalah 24 jam. Untuk kerusakan darurat, proses bisa lebih cepat." },
+      { "q": "Apakah data saya aman?", "a": "Sangat aman. SICEPU menggunakan autentikasi JWT dengan enkripsi password bcrypt." }
+    ]
+  },
+  "footer": {
+    "description": "Sistem Informasi Cepat Pelaporan Kerusakan Fasilitas Kampus.",
+    "navigation": "Navigasi",
+    "contact": "Kontak",
+    "copyright": "All rights reserved."
+  },
+  "dashboard": {
+    "welcome": "Selamat datang",
+    "totalReports": "Total Laporan",
+    "pending": "Menunggu",
+    "processing": "Diproses",
+    "completed": "Selesai",
+    "rejected": "Ditolak",
+    "recentReports": "Laporan Terbaru",
+    "monthlyChart": "Grafik Bulanan",
+    "statusChart": "Status Laporan"
+  },
+  "reports": {
+    "create": "Buat Laporan",
+    "list": "Daftar Laporan",
+    "detail": "Detail Laporan",
+    "facilityName": "Nama Fasilitas",
+    "location": "Lokasi",
+    "category": "Kategori",
+    "priority": "Prioritas",
+    "description": "Deskripsi",
+    "date": "Tanggal Kejadian",
+    "photos": "Foto Bukti",
+    "status": "Status",
+    "adminNote": "Catatan Admin",
+    "submitReport": "Kirim Laporan",
+    "editReport": "Edit Laporan",
+    "deleteReport": "Hapus Laporan",
+    "categories": {
+      "electrical": "Listrik",
+      "plumbing": "Plumbing",
+      "furniture": "Furniture",
+      "it": "IT/Komputer",
+      "building": "Bangunan",
+      "other": "Lainnya"
+    },
+    "priorities": {
+      "low": "Rendah",
+      "medium": "Sedang",
+      "high": "Tinggi",
+      "urgent": "Darurat"
+    }
+  },
+  "admin": {
+    "manageReports": "Kelola Laporan",
+    "manageUsers": "Kelola User",
+    "viewAllReports": "Lihat Semua Laporan",
+    "detailReport": "Detail Laporan",
+    "updateStatus": "Update Status",
+    "viewUser": "Lihat User",
+    "addUser": "Tambah User",
+    "process": "Proses",
+    "complete": "Selesai",
+    "reject": "Tolak"
+  },
+  "profile": {
+    "editProfile": "Edit Profil",
+    "changePassword": "Ubah Password",
+    "currentPassword": "Password Lama",
+    "newPassword": "Password Baru",
+    "confirmNewPassword": "Konfirmasi Password Baru",
+    "uploadAvatar": "Upload Avatar",
+    "changeAvatar": "Ganti Avatar"
+  },
+  "chat": {
+    "title": "Chat Laporan",
+    "placeholder": "Ketik pesan...",
+    "send": "Kirim",
+    "noMessages": "Belum ada pesan",
+    "startConversation": "Kirim pesan untuk memulai percakapan"
+  }
+}

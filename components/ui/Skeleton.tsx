@@ -1,9 +1,3 @@
-interface SkeletonProps {
-  className?: string;
-}
-
-export default function Skeleton({ className = "" }: SkeletonProps) {
-  return (
-    <div className={`skeleton rounded-xl ${className}`} />
-  );
+export default function Skeleton({ className = "" }: { className?: string }) {
+  return <div className={`skeleton rounded-lg ${className}`} />;
 }

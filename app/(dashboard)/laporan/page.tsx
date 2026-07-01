@@ -77,7 +77,7 @@ function LaporanContent() {
   const columns = [
     {
       key: "facilityName",
-      header: "Fasilitas",
+      label: "Fasilitas",
       render: (r: Report) => (
         <div className="flex items-center gap-3">
           {r.photos && r.photos.length > 0 ? (
@@ -96,15 +96,15 @@ function LaporanContent() {
         </div>
       ),
     },
-    { key: "category", header: "Kategori", render: (r: Report) => <span className="text-slate-600 dark:text-slate-400 text-sm">{r.category}</span> },
+    { key: "category", label: "Kategori", render: (r: Report) => <span className="text-slate-600 dark:text-slate-400 text-sm">{r.category}</span> },
     {
       key: "status",
-      header: "Status",
+      label: "Status",
       render: (r: Report) => <Badge status={r.status} />,
     },
     {
       key: "createdAt",
-      header: "Tanggal",
+      label: "Tanggal",
       render: (r: Report) => (
         <span className="text-sm text-slate-500 dark:text-slate-400">
           {new Date(r.createdAt).toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "numeric" })}
@@ -113,7 +113,7 @@ function LaporanContent() {
     },
     {
       key: "actions",
-      header: "",
+      label: "",
       className: "text-right",
       render: (r: Report) => (
         <Link href={`/laporan/${r.id}`}>

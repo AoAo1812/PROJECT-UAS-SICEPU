@@ -1,0 +1,187 @@
+{
+  "common": {
+    "appName": "SICEPU",
+    "loading": "Loading...",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "back": "Back",
+    "search": "Search...",
+    "noData": "No data",
+    "submit": "Submit",
+    "confirm": "Confirm",
+    "success": "Success",
+    "error": "Error"
+  },
+  "nav": {
+    "home": "Home",
+    "features": "Features",
+    "about": "About",
+    "faq": "FAQ",
+    "contact": "Contact",
+    "dashboard": "Dashboard",
+    "login": "Login",
+    "register": "Register",
+    "logout": "Logout",
+    "profile": "Profile"
+  },
+  "auth": {
+    "loginTitle": "Login to SICEPU",
+    "loginSubtitle": "Enter your credentials",
+    "registerTitle": "Register SICEPU",
+    "registerSubtitle": "Create a new account",
+    "email": "Email",
+    "password": "Password",
+    "confirmPassword": "Confirm Password",
+    "name": "Full Name",
+    "loginButton": "Login",
+    "registerButton": "Register",
+    "loginWithGoogle": "Login with Google",
+    "registerWithGoogle": "Register with Google",
+    "noAccount": "Don't have an account?",
+    "hasAccount": "Already have an account?",
+    "forgotPassword": "Forgot password?",
+    "or": "or"
+  },
+  "hero": {
+    "badge": "#1 Reporting Platform",
+    "title1": "Report Campus",
+    "titleHighlight": "Facility Damage",
+    "title2": "Quickly",
+    "description": "SICEPU makes it easy for students and staff to report campus facility damage quickly, transparently, and in real-time.",
+    "cta1": "Create Report",
+    "cta2": "Login",
+    "trust1": "Free for students",
+    "trust2": "Real-time tracking",
+    "trust3": "Secure & private"
+  },
+  "features": {
+    "badge": "Features",
+    "title": "Complete Solution for",
+    "titleHighlight": "Reporting",
+    "subtitle": "Everything you need to report and monitor campus facility damage.",
+    "items": {
+      "fastReport": { "title": "Quick Reports", "desc": "Create damage reports in minutes with an intuitive multi-step form." },
+      "tracking": { "title": "Real-Time Tracking", "desc": "Track report status from Pending to Completed with automatic notifications." },
+      "photo": { "title": "Photo Upload", "desc": "Include photo evidence with drag-and-drop upload with instant preview." },
+      "analytics": { "title": "Analytics Dashboard", "desc": "Visualize report data with interactive charts and comprehensive statistics." },
+      "security": { "title": "Data Security", "desc": "JWT authentication with bcrypt password encryption keeps your data safe." },
+      "mobile": { "title": "Mobile Friendly", "desc": "Access SICEPU from any device with an optimally responsive design." }
+    }
+  },
+  "stats": {
+    "badge": "Statistics",
+    "title": "Features You",
+    "titleHighlight": "Need",
+    "tracking": "Status Tracking",
+    "photos": "Photos per Report",
+    "response": "Average Response",
+    "free": "Free for Campus"
+  },
+  "timeline": {
+    "badge": "How It Works",
+    "title": "Easy in",
+    "titleHighlight": "4 Steps",
+    "steps": {
+      "register": { "title": "Create Account", "desc": "Create a free account using your campus email." },
+      "report": { "title": "Create Report", "desc": "Fill in the report form with damage details and upload photos." },
+      "track": { "title": "Track Status", "desc": "Track your report status in real-time." },
+      "done": { "title": "Completed", "desc": "The technical team will repair the damage." }
+    }
+  },
+  "testimonials": {
+    "badge": "Testimonials",
+    "title": "What Our",
+    "titleHighlight": "Users Say"
+  },
+  "faq": {
+    "badge": "FAQ",
+    "title": "Frequently Asked",
+    "titleHighlight": "Questions",
+    "items": [
+      { "q": "How do I register on SICEPU?", "a": "Simply click the Register button, enter your name, campus email, and password. Your account is immediately active." },
+      { "q": "Can I report more than one damage?", "a": "Of course! You can create as many reports as needed. Each report is separate and can be tracked independently." },
+      { "q": "How do I track my report status?", "a": "Log in to the dashboard, click My Reports, and see the current status of each report." },
+      { "q": "What photo formats are supported?", "a": "JPEG, PNG, WebP, and GIF with a maximum size of 5MB per photo. Upload up to 5 photos per report." },
+      { "q": "How long is the response time?", "a": "Average response time is 24 hours. For emergency repairs, the process can be faster." },
+      { "q": "Is my data safe?", "a": "Very safe. SICEPU uses JWT authentication with bcrypt password encryption." }
+    ]
+  },
+  "footer": {
+    "description": "Campus Facility Damage Quick Reporting Information System.",
+    "navigation": "Navigation",
+    "contact": "Contact",
+    "copyright": "All rights reserved."
+  },
+  "dashboard": {
+    "welcome": "Welcome",
+    "totalReports": "Total Reports",
+    "pending": "Pending",
+    "processing": "Processing",
+    "completed": "Completed",
+    "rejected": "Rejected",
+    "recentReports": "Recent Reports",
+    "monthlyChart": "Monthly Chart",
+    "statusChart": "Report Status"
+  },
+  "reports": {
+    "create": "Create Report",
+    "list": "Report List",
+    "detail": "Report Detail",
+    "facilityName": "Facility Name",
+    "location": "Location",
+    "category": "Category",
+    "priority": "Priority",
+    "description": "Description",
+    "date": "Incident Date",
+    "photos": "Photo Evidence",
+    "status": "Status",
+    "adminNote": "Admin Note",
+    "submitReport": "Submit Report",
+    "editReport": "Edit Report",
+    "deleteReport": "Delete Report",
+    "categories": {
+      "electrical": "Electrical",
+      "plumbing": "Plumbing",
+      "furniture": "Furniture",
+      "it": "IT/Computer",
+      "building": "Building",
+      "other": "Other"
+    },
+    "priorities": {
+      "low": "Low",
+      "medium": "Medium",
+      "high": "High",
+      "urgent": "Urgent"
+    }
+  },
+  "admin": {
+    "manageReports": "Manage Reports",
+    "manageUsers": "Manage Users",
+    "viewAllReports": "View All Reports",
+    "detailReport": "Report Detail",
+    "updateStatus": "Update Status",
+    "viewUser": "View User",
+    "addUser": "Add User",
+    "process": "Process",
+    "complete": "Complete",
+    "reject": "Reject"
+  },
+  "profile": {
+    "editProfile": "Edit Profile",
+    "changePassword": "Change Password",
+    "currentPassword": "Current Password",
+    "newPassword": "New Password",
+    "confirmNewPassword": "Confirm New Password",
+    "uploadAvatar": "Upload Avatar",
+    "changeAvatar": "Change Avatar"
+  },
+  "chat": {
+    "title": "Report Chat",
+    "placeholder": "Type a message...",
+    "send": "Send",
+    "noMessages": "No messages yet",
+    "startConversation": "Send a message to start the conversation"
+  }
+}

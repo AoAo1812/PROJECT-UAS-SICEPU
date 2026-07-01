@@ -91,7 +91,7 @@ export default function AdminLaporanPage() {
   const columns = [
     {
       key: "facilityName",
-      header: "Fasilitas",
+      label: "Fasilitas",
       render: (r: Report) => (
         <div>
           <p className="font-medium text-slate-900 dark:text-white">{r.facilityName}</p>
@@ -99,11 +99,11 @@ export default function AdminLaporanPage() {
         </div>
       ),
     },
-    { key: "userName", header: "Pelapor", render: (r: Report) => <span className="text-slate-600 dark:text-slate-400 text-sm">{r.userName}</span> },
-    { key: "category", header: "Kategori", render: (r: Report) => <span className="text-slate-600 dark:text-slate-400 text-sm">{r.category}</span> },
+    { key: "userName", label: "Pelapor", render: (r: Report) => <span className="text-slate-600 dark:text-slate-400 text-sm">{r.userName}</span> },
+    { key: "category", label: "Kategori", render: (r: Report) => <span className="text-slate-600 dark:text-slate-400 text-sm">{r.category}</span> },
     {
       key: "priority",
-      header: "Prioritas",
+      label: "Prioritas",
       render: (r: Report) => {
         const colors: Record<string, string> = {
           Rendah: "bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-400",
@@ -114,15 +114,15 @@ export default function AdminLaporanPage() {
         return <span className={`text-xs px-2 py-0.5 rounded-full font-semibold ${colors[r.priority] || colors.Sedang}`}>{r.priority}</span>;
       },
     },
-    { key: "status", header: "Status", render: (r: Report) => <Badge status={r.status} /> },
+    { key: "status", label: "Status", render: (r: Report) => <Badge status={r.status} /> },
     {
       key: "createdAt",
-      header: "Tanggal",
+      label: "Tanggal",
       render: (r: Report) => <span className="text-sm text-slate-500 dark:text-slate-400">{new Date(r.createdAt).toLocaleDateString("id-ID")}</span>,
     },
     {
       key: "actions",
-      header: "",
+      label: "",
       className: "text-right",
       render: (r: Report) => (
         <div className="flex justify-end gap-1">

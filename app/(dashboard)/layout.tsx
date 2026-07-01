@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, createContext, useContext, ReactNode } from "react";
+import { useState, useEffect, createContext, useContext } from "react";
 import { useRouter } from "next/navigation";
 import Sidebar from "@/components/layout/Sidebar";
 
@@ -24,6 +24,7 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   const [collapsed, setCollapsed] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
   const [user, setUser] = useState<UserData | null>(null);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
@@ -42,13 +43,13 @@ export default function DashboardLayout({
   if (loading) {
     return (
       <div className="flex min-h-screen bg-[var(--background)] items-center justify-center">
-        <div className="flex flex-col items-center gap-4">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-600 to-blue-500 flex items-center justify-center shadow-lg shadow-blue-500/25 animate-pulse">
-            <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <div className="flex flex-col items-center gap-3">
+          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-accent flex items-center justify-center animate-pulse">
+            <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
             </svg>
           </div>
-          <p className="text-sm text-slate-500 dark:text-slate-400">Memuat...</p>
+          <p className="text-xs text-[var(--foreground)]/40">Memuat...</p>
         </div>
       </div>
     );
@@ -59,8 +60,20 @@ export default function DashboardLayout({
   return (
     <UserContext.Provider value={user}>
       <div className="flex min-h-screen bg-[var(--background)]">
-        <Sidebar collapsed={collapsed} onToggle={() => setCollapsed(!collapsed)} />
-        <main className="flex-1 min-w-0 p-6 lg:p-8 overflow-x-hidden">
+        {mobileOpen && (
+          <div className="fixed inset-0 bg-black/50 z-40 lg:hidden" onClick={() => setMobileOpen(false)} />
+        )}
+
+        <div className={`fixed inset-y-0 left-0 z-50 transform transition-transform duration-300 lg:relative lg:transform-none ${mobileOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}`}>
+          <Sidebar collapsed={collapsed} onToggle={() => setCollapsed(!collapsed)} onClose={() => setMobileOpen(false)} />
+        </div>
+
+        <main className="flex-1 min-w-0 p-4 sm:p-6 overflow-x-hidden">
+          <button onClick={() => setMobileOpen(true)} className="lg:hidden fixed top-3 left-3 z-30 w-8 h-8 rounded-lg bg-[var(--surface)] border border-[var(--border-color)] shadow-lg flex items-center justify-center text-[var(--foreground)]/60 hover:text-[var(--foreground)] transition-colors">
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          </button>
           {children}
         </main>
       </div>

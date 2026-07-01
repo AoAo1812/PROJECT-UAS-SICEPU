@@ -16,39 +16,39 @@ export default function StatCard({
   title,
   value,
   icon,
-  color = "blue",
+  color = "primary",
   trend,
   delay = 0,
 }: StatCardProps) {
   const colorMap: Record<string, { bg: string; glow: string; iconBg: string }> = {
-    blue: {
-      bg: "from-blue-50/50 to-transparent dark:from-blue-950/20 dark:to-transparent",
-      glow: "shadow-blue-500/10",
-      iconBg: "from-blue-500 to-blue-600",
+    primary: {
+      bg: "from-primary/5 to-transparent",
+      glow: "shadow-primary/10",
+      iconBg: "from-primary to-accent",
     },
-    green: {
-      bg: "from-emerald-50/50 to-transparent dark:from-emerald-950/20 dark:to-transparent",
+    emerald: {
+      bg: "from-emerald-500/5 to-transparent",
       glow: "shadow-emerald-500/10",
       iconBg: "from-emerald-500 to-emerald-600",
     },
     amber: {
-      bg: "from-amber-50/50 to-transparent dark:from-amber-950/20 dark:to-transparent",
+      bg: "from-amber-500/5 to-transparent",
       glow: "shadow-amber-500/10",
       iconBg: "from-amber-500 to-amber-600",
     },
     red: {
-      bg: "from-red-50/50 to-transparent dark:from-red-950/20 dark:to-transparent",
+      bg: "from-red-500/5 to-transparent",
       glow: "shadow-red-500/10",
       iconBg: "from-red-500 to-red-600",
     },
     purple: {
-      bg: "from-purple-50/50 to-transparent dark:from-purple-950/20 dark:to-transparent",
+      bg: "from-purple-500/5 to-transparent",
       glow: "shadow-purple-500/10",
       iconBg: "from-purple-500 to-purple-600",
     },
   };
 
-  const c = colorMap[color] || colorMap.blue;
+  const c = colorMap[color] || colorMap.primary;
 
   return (
     <motion.div
@@ -56,30 +56,20 @@ export default function StatCard({
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4, delay }}
       whileHover={{ y: -2, transition: { duration: 0.2 } }}
-      className={`relative rounded-2xl bg-white dark:bg-slate-900/80 border border-slate-200/80 dark:border-slate-800/80 p-6 shadow-sm hover:shadow-md transition-shadow duration-300 overflow-hidden group`}
+      className="relative rounded-xl bg-[var(--surface)] border border-[var(--border-color)] p-5 hover:border-primary/30 transition-all duration-200 overflow-hidden group"
     >
-      {/* Background gradient */}
-      <div
-        className={`absolute inset-0 bg-gradient-to-br ${c.bg} opacity-0 group-hover:opacity-100 transition-opacity duration-300`}
-      />
-
+      <div className={`absolute inset-0 bg-gradient-to-br ${c.bg} opacity-0 group-hover:opacity-100 transition-opacity duration-300`} />
       <div className="relative flex items-center justify-between">
-        <div className="space-y-1.5">
-          <p className="text-sm font-medium text-slate-500 dark:text-slate-400">
-            {title}
-          </p>
-          <p className="text-3xl font-bold text-slate-900 dark:text-white tracking-tight">
+        <div className="space-y-1">
+          <p className="text-xs font-medium text-[var(--foreground)]/60">{title}</p>
+          <p className="text-2xl font-bold text-[var(--foreground)] tracking-tight">
             {typeof value === "number" ? value.toLocaleString() : value}
           </p>
           {trend && (
-            <p className="text-xs font-medium text-emerald-600 dark:text-emerald-400">
-              {trend}
-            </p>
+            <p className="text-xs font-medium text-emerald-400">{trend}</p>
           )}
         </div>
-        <div
-          className={`w-12 h-12 rounded-xl bg-gradient-to-br ${c.iconBg} flex items-center justify-center text-white shadow-lg ${c.glow} group-hover:scale-110 transition-transform duration-300`}
-        >
+        <div className={`w-10 h-10 rounded-lg bg-gradient-to-br ${c.iconBg} flex items-center justify-center text-white shadow-lg ${c.glow} group-hover:scale-110 transition-transform duration-300`}>
           {icon}
         </div>
       </div>
