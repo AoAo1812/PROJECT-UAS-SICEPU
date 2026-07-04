@@ -12,6 +12,7 @@ import Select from "@/components/ui/Select";
 import Textarea from "@/components/ui/Textarea";
 import DataTable from "@/components/ui/DataTable";
 import Skeleton from "@/components/ui/Skeleton";
+import { useTranslation } from "@/lib/i18n";
 
 interface Report {
   id: string;
@@ -25,6 +26,7 @@ interface Report {
 }
 
 export default function AdminLaporanPage() {
+  const { t } = useTranslation();
   const [reports, setReports] = useState<Report[]>([]);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
@@ -36,8 +38,24 @@ export default function AdminLaporanPage() {
   const [editForm, setEditForm] = useState({ status: "Menunggu", adminNote: "" });
   const [saving, setSaving] = useState(false);
 
+  const categoryKey: Record<string, string> = {
+    Listrik: "reports.categories.electrical",
+    Plumbing: "reports.categories.plumbing",
+    Furniture: "reports.categories.furniture",
+    "IT/Komputer": "reports.categories.it",
+    Bangunan: "reports.categories.building",
+    Lainnya: "reports.categories.other",
+  };
+
+  const priorityKey: Record<string, string> = {
+    Rendah: "reports.priorities.low",
+    Sedang: "reports.priorities.medium",
+    Tinggi: "reports.priorities.high",
+    Darurat: "reports.priorities.urgent",
+  };
+
   const fetchReports = () => {
-    setLoading(true);
+    if (reports.length === 0) setLoading(true);
     const params = new URLSearchParams({ page: String(page), limit: "10" });
     if (search) params.set("search", search);
     if (statusFilter) params.set("status", statusFilter);
@@ -51,7 +69,12 @@ export default function AdminLaporanPage() {
       .finally(() => setLoading(false));
   };
 
-  useEffect(() => { fetchReports(); }, [page, search, statusFilter]);
+  useEffect(() => { fetchReports(); }, [page, statusFilter]);
+
+  useEffect(() => {
+    const timeout = setTimeout(() => { setPage(1); fetchReports(); }, 300);
+    return () => clearTimeout(timeout);
+  }, [search]);
 
   const openEdit = (report: Report) => {
     setEditModal(report);
@@ -67,12 +90,12 @@ export default function AdminLaporanPage() {
       body: JSON.stringify(editForm),
     });
     if (res.ok) {
-      toast.success(`Laporan "${editModal.facilityName}" berhasil diperbarui`);
+      toast.success(t("common.success"));
       setEditModal(null);
       fetchReports();
     } else {
       const data = await res.json();
-      toast.error(data.error || "Gagal memperbarui laporan");
+      toast.error(data.error || t("common.error"));
     }
     setSaving(false);
   };
@@ -81,17 +104,17 @@ export default function AdminLaporanPage() {
     if (!confirm(`Yakin ingin menghapus laporan "${name}"?`)) return;
     const res = await fetch(`/api/reports/${id}`, { method: "DELETE" });
     if (res.ok) {
-      toast.success("Laporan berhasil dihapus");
+      toast.success(t("common.success"));
       fetchReports();
     } else {
-      toast.error("Gagal menghapus laporan");
+      toast.error(t("common.error"));
     }
   };
 
   const columns = [
     {
       key: "facilityName",
-      label: "Fasilitas",
+      label: t("reports.facility"),
       render: (r: Report) => (
         <div>
           <p className="font-medium text-slate-900 dark:text-white">{r.facilityName}</p>
@@ -99,11 +122,11 @@ export default function AdminLaporanPage() {
         </div>
       ),
     },
-    { key: "userName", label: "Pelapor", render: (r: Report) => <span className="text-slate-600 dark:text-slate-400 text-sm">{r.userName}</span> },
-    { key: "category", label: "Kategori", render: (r: Report) => <span className="text-slate-600 dark:text-slate-400 text-sm">{r.category}</span> },
+    { key: "userName", label: t("reports.reporter"), render: (r: Report) => <span className="text-slate-600 dark:text-slate-400 text-sm">{r.userName}</span> },
+    { key: "category", label: t("reports.category"), render: (r: Report) => <span className="text-slate-600 dark:text-slate-400 text-sm">{t(categoryKey[r.category] || "reports.categories.other")}</span> },
     {
       key: "priority",
-      label: "Prioritas",
+      label: t("reports.priority"),
       render: (r: Report) => {
         const colors: Record<string, string> = {
           Rendah: "bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-400",
@@ -111,13 +134,13 @@ export default function AdminLaporanPage() {
           Tinggi: "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400",
           Darurat: "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400",
         };
-        return <span className={`text-xs px-2 py-0.5 rounded-full font-semibold ${colors[r.priority] || colors.Sedang}`}>{r.priority}</span>;
+        return <span className={`text-xs px-2 py-0.5 rounded-full font-semibold ${colors[r.priority] || colors.Sedang}`}>{t(priorityKey[r.priority] || "reports.priorities.medium")}</span>;
       },
     },
-    { key: "status", label: "Status", render: (r: Report) => <Badge status={r.status} /> },
+    { key: "status", label: t("reports.status"), render: (r: Report) => <Badge status={r.status} /> },
     {
       key: "createdAt",
-      label: "Tanggal",
+      label: t("reports.date"),
       render: (r: Report) => <span className="text-sm text-slate-500 dark:text-slate-400">{new Date(r.createdAt).toLocaleDateString("id-ID")}</span>,
     },
     {
@@ -129,16 +152,16 @@ export default function AdminLaporanPage() {
           <Link href={`/admin/laporan/${r.id}`}>
             <Button variant="ghost" size="sm">
               <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
-              Detail
+              {t("reports.detailButton")}
             </Button>
           </Link>
           <Button variant="ghost" size="sm" onClick={() => openEdit(r)}>
             <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
-            Status
+            {t("admin.updateStatus")}
           </Button>
           <Button variant="ghost" size="sm" onClick={() => handleDelete(r.id, r.facilityName)} className="text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20">
             <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
-            Hapus
+            {t("common.delete")}
           </Button>
         </div>
       ),
@@ -157,18 +180,18 @@ export default function AdminLaporanPage() {
   return (
     <div>
       <Topbar
-        title="Kelola Laporan"
-        subtitle="Kelola seluruh laporan yang masuk dari pengguna"
+        title={t("admin.manageReports")}
+        subtitle={t("reports.subtitle")}
       />
 
       {/* Status Filter Tabs */}
       <div className="flex flex-wrap gap-2 mb-6">
         {[
-          { value: "", label: "Semua" },
-          { value: "Menunggu", label: "Menunggu", dot: "bg-amber-500" },
-          { value: "Diproses", label: "Diproses", dot: "bg-blue-500" },
-          { value: "Selesai", label: "Selesai", dot: "bg-emerald-500" },
-          { value: "Ditolak", label: "Ditolak", dot: "bg-red-500" },
+          { value: "", label: t("reports.all"), dot: "" },
+          { value: "Menunggu", label: t("dashboard.pending"), dot: "bg-amber-500" },
+          { value: "Diproses", label: t("dashboard.processing"), dot: "bg-blue-500" },
+          { value: "Selesai", label: t("dashboard.completed"), dot: "bg-emerald-500" },
+          { value: "Ditolak", label: t("dashboard.rejected"), dot: "bg-red-500" },
         ].map((s) => (
           <button
             key={s.value}
@@ -195,40 +218,46 @@ export default function AdminLaporanPage() {
           onPageChange={setPage}
           search={search}
           onSearchChange={(v) => { setSearch(v); setPage(1); }}
-          searchPlaceholder="Cari nama fasilitas, lokasi, atau pelapor..."
+          searchPlaceholder={t("admin.searchPlaceholder")}
+          paginationLabels={{
+            previous: t("pagination.previous"),
+            next: t("pagination.next"),
+            page: t("pagination.page"),
+            of: t("pagination.of"),
+          }}
         />
       </Card>
 
       {/* Edit Status Modal */}
-      <Modal open={!!editModal} onClose={() => setEditModal(null)} title={`Ubah Status: ${editModal?.facilityName || ""}`}>
+      <Modal open={!!editModal} onClose={() => setEditModal(null)} title={t("admin.changeStatus").replace("{name}", editModal?.facilityName || "")}>
         <div className="space-y-4">
           <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 text-sm">
-            <p className="text-slate-500 dark:text-slate-400">Pelapor: <span className="font-medium text-slate-900 dark:text-white">{editModal?.userName}</span></p>
-            <p className="text-slate-500 dark:text-slate-400">Lokasi: <span className="font-medium text-slate-900 dark:text-white">{editModal?.location}</span></p>
+            <p className="text-slate-500 dark:text-slate-400">{t("admin.reporterLabel")} <span className="font-medium text-slate-900 dark:text-white">{editModal?.userName}</span></p>
+            <p className="text-slate-500 dark:text-slate-400">{t("admin.locationLabel")} <span className="font-medium text-slate-900 dark:text-white">{editModal?.location}</span></p>
           </div>
           <Select
-            label="Status Laporan"
+            label={t("admin.statusLabel")}
             options={[
-              { value: "Menunggu", label: "Menunggu - Belum diproses" },
-              { value: "Diproses", label: "Diproses - Sedang dikerjakan" },
-              { value: "Selesai", label: "Selesai - Telah diperbaiki" },
-              { value: "Ditolak", label: "Ditolak - Tidak memenuhi kriteria" },
+              { value: "Menunggu", label: t("admin.statusPending") },
+              { value: "Diproses", label: t("admin.statusProcessing") },
+              { value: "Selesai", label: t("admin.statusCompleted") },
+              { value: "Ditolak", label: t("admin.statusRejected") },
             ]}
             value={editForm.status}
             onChange={(e) => setEditForm({ ...editForm, status: e.target.value })}
           />
           <Textarea
-            label="Catatan Admin"
-            placeholder="Tambahkan catatan untuk pelapor (opsional)..."
+            label={t("admin.adminNoteLabel")}
+            placeholder={t("admin.adminNotePlaceholder")}
             rows={3}
             value={editForm.adminNote}
             onChange={(e) => setEditForm({ ...editForm, adminNote: e.target.value })}
           />
           <div className="flex justify-end gap-3 pt-2">
-            <Button variant="ghost" onClick={() => setEditModal(null)}>Batal</Button>
+            <Button variant="ghost" onClick={() => setEditModal(null)}>{t("common.cancel")}</Button>
             <Button onClick={saveEdit} loading={saving}>
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
-              Simpan Status
+              {t("admin.saveStatus")}
             </Button>
           </div>
         </div>

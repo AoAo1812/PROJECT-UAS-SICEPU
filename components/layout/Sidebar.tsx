@@ -1,18 +1,21 @@
 "use client";
 
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
+import { motion, AnimatePresence } from "framer-motion";
 import { useTheme } from "@/components/providers/ThemeProvider";
-import { useTranslation } from "@/lib/i18n";
+import { useTranslation, getAvailableLocales } from "@/lib/i18n";
 import Avatar from "@/components/ui/Avatar";
+import Logo from "@/components/ui/Logo";
 import { UserContext } from "@/app/(dashboard)/layout";
 
 export default function Sidebar({ collapsed, onToggle, onClose }: { collapsed: boolean; onToggle: () => void; onClose?: () => void }) {
   const pathname = usePathname();
   const router = useRouter();
   const { toggle } = useTheme();
-  const { t } = useTranslation();
+  const { t, locale, setLocale } = useTranslation();
+  const [langOpen, setLangOpen] = useState(false);
   const user = useContext(UserContext);
 
   const userNav = [
@@ -46,13 +49,10 @@ export default function Sidebar({ collapsed, onToggle, onClose }: { collapsed: b
       <div className="flex items-center justify-between h-14 px-3 border-b border-[var(--border-color)]">
         {!collapsed && (
           <Link href={user?.role === "admin" ? "/admin" : "/dashboard"} className="flex items-center gap-2" onClick={onClose}>
-            <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-primary to-accent flex items-center justify-center">
-              <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-              </svg>
-            </div>
-            <span className="text-sm font-bold text-[var(--foreground)]">
-              SIC<span className="text-primary">EPU</span>
+            <Logo size="sm" showText={false} />
+            <span className="text-sm font-bold">
+              <span className="text-[var(--foreground)]">SI</span>
+              <span className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">CEPU</span>
             </span>
           </Link>
         )}
@@ -79,7 +79,7 @@ export default function Sidebar({ collapsed, onToggle, onClose }: { collapsed: b
       {/* Admin Badge */}
       {user?.role === "admin" && !collapsed && (
         <div className="mx-2 mt-2 px-2.5 py-1.5 rounded-lg bg-primary/10 border border-primary/20">
-          <p className="text-[10px] font-medium text-primary">Admin Mode</p>
+          <p className="text-[10px] font-medium text-primary">{t("sidebar.adminMode")}</p>
         </div>
       )}
 
@@ -116,8 +116,47 @@ export default function Sidebar({ collapsed, onToggle, onClose }: { collapsed: b
           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
           </svg>
-          {!collapsed && <span>Mode Gelap</span>}
+          {!collapsed && <span>{t("sidebar.darkMode")}</span>}
         </button>
+
+        {/* Language Selector */}
+        {!collapsed && (
+          <div className="relative">
+            <button
+              onClick={() => setLangOpen(!langOpen)}
+              className="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-sm text-[var(--foreground)]/60 hover:text-[var(--foreground)] hover:bg-[var(--surface)] transition-all"
+            >
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
+              </svg>
+              <span>{locale.toUpperCase()}</span>
+            </button>
+            <AnimatePresence>
+              {langOpen && (
+                <motion.div
+                  initial={{ opacity: 0, y: -8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -8 }}
+                  className="absolute bottom-full left-0 right-0 mb-1 bg-[var(--surface)] border border-[var(--border-color)] rounded-lg shadow-xl overflow-hidden z-50"
+                >
+                  {getAvailableLocales().map((loc) => (
+                    <button
+                      key={loc.value}
+                      onClick={() => { setLocale(loc.value); setLangOpen(false); }}
+                      className={`w-full px-3 py-2 text-left text-sm transition-colors ${
+                        locale === loc.value
+                          ? "bg-primary/10 text-primary"
+                          : "text-[var(--foreground)]/60 hover:bg-[var(--background)]"
+                      }`}
+                    >
+                      {loc.label}
+                    </button>
+                  ))}
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+        )}
 
         <button
           onClick={logout}
@@ -135,7 +174,7 @@ export default function Sidebar({ collapsed, onToggle, onClose }: { collapsed: b
             <div className="min-w-0">
               <p className="text-xs font-medium text-[var(--foreground)] truncate">{user.name}</p>
               <p className="text-[10px] text-[var(--foreground)]/30 truncate">
-                {user.role === "admin" ? "Administrator" : "User"}
+                {user.role === "admin" ? t("sidebar.administrator") : t("sidebar.user")}
               </p>
             </div>
           </div>

@@ -1,14 +1,27 @@
+import { NextRequest } from "next/server";
 import { getCurrentUser, isAdminEmail } from "@/lib/auth";
-import { getReportStats, getMonthlyReportData, getReportsByUserId } from "@/lib/db";
+import { getReportStats, getMonthlyReportData, getWeeklyReportData, getYearlyReportData, getReportsByUserId } from "@/lib/db";
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   const payload = await getCurrentUser();
   if (!payload) {
     return Response.json({ error: "Tidak terautentikasi" }, { status: 401 });
   }
 
+  const { searchParams } = request.nextUrl;
+  const period = searchParams.get("period") || "monthly";
+
+  let chartData;
+  if (period === "weekly") {
+    chartData = getWeeklyReportData();
+  } else if (period === "yearly") {
+    chartData = getYearlyReportData();
+  } else {
+    chartData = getMonthlyReportData();
+  }
+
   if (isAdminEmail(payload.email)) {
-    return Response.json({ stats: getReportStats(), monthly: getMonthlyReportData() });
+    return Response.json({ stats: getReportStats(), monthly: chartData });
   }
 
   const reports = getReportsByUserId(payload.userId);
@@ -25,5 +38,5 @@ export async function GET() {
     }).length,
   };
 
-  return Response.json({ stats });
+  return Response.json({ stats, monthly: chartData });
 }

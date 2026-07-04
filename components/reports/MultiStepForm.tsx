@@ -9,29 +9,31 @@ import Select from "@/components/ui/Select";
 import Textarea from "@/components/ui/Textarea";
 import Button from "@/components/ui/Button";
 import FileUpload from "@/components/ui/FileUpload";
+import { useTranslation } from "@/lib/i18n";
 
-const steps = ["Fasilitas", "Lokasi", "Detail", "Foto"];
+const stepsKeys = ["reports.facility", "reports.location", "reports.description", "reports.photos"];
 
-const categories = [
-  { value: "Fasilitas Ruangan", label: "Fasilitas Ruangan" },
-  { value: "Peralatan", label: "Peralatan" },
-  { value: "Listrik & Air", label: "Listrik & Air" },
-  { value: "Jaringan & Internet", label: "Jaringan & Internet" },
-  { value: "Furniture", label: "Furniture" },
-  { value: "Kebersihan", label: "Kebersihan" },
-  { value: "Keamanan", label: "Keamanan" },
-  { value: "Lainnya", label: "Lainnya" },
+const categoryKeys = [
+  { value: "Fasilitas Ruangan", labelKey: "reports.categories.facilityRoom" },
+  { value: "Peralatan", labelKey: "reports.categories.equipment" },
+  { value: "Listrik & Air", labelKey: "reports.categories.electricalWater" },
+  { value: "Jaringan & Internet", labelKey: "reports.categories.network" },
+  { value: "Furniture", labelKey: "reports.categories.furniture" },
+  { value: "Kebersihan", labelKey: "reports.categories.cleanliness" },
+  { value: "Keamanan", labelKey: "reports.categories.security" },
+  { value: "Lainnya", labelKey: "reports.categories.other" },
 ];
 
-const priorities = [
-  { value: "Rendah", label: "Rendah" },
-  { value: "Sedang", label: "Sedang" },
-  { value: "Tinggi", label: "Tinggi" },
-  { value: "Darurat", label: "Darurat" },
+const priorityKeys = [
+  { value: "Rendah", labelKey: "reports.priorities.low" },
+  { value: "Sedang", labelKey: "reports.priorities.medium" },
+  { value: "Tinggi", labelKey: "reports.priorities.high" },
+  { value: "Darurat", labelKey: "reports.priorities.urgent" },
 ];
 
 export default function MultiStepForm() {
   const router = useRouter();
+  const { t } = useTranslation();
   const [step, setStep] = useState(0);
   const [loading, setLoading] = useState(false);
   const [form, setForm] = useState({
@@ -79,6 +81,10 @@ export default function MultiStepForm() {
     }
   };
 
+  const steps = stepsKeys.map((key) => t(key));
+  const categories = categoryKeys.map((c) => ({ value: c.value, label: t(c.labelKey) }));
+  const priorities = priorityKeys.map((p) => ({ value: p.value, label: t(p.labelKey) }));
+
   return (
     <div className="max-w-2xl mx-auto">
       <div className="flex items-center mb-8">
@@ -118,12 +124,12 @@ export default function MultiStepForm() {
             {step === 0 && (
               <>
                 <div>
-                  <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-1">Informasi Fasilitas</h3>
-                  <p className="text-sm text-slate-500 dark:text-slate-400">Masukkan nama fasilitas yang rusak</p>
+                  <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-1">{t("reports.step1.title")}</h3>
+                  <p className="text-sm text-slate-500 dark:text-slate-400">{t("reports.step1.subtitle")}</p>
                 </div>
                 <Input
-                  label="Nama Fasilitas"
-                  placeholder="Contoh: AC Ruangan 301"
+                  label={t("reports.facilityName")}
+                  placeholder={t("reports.step1.placeholder")}
                   value={form.facilityName}
                   onChange={(e) => update("facilityName", e.target.value)}
                 />
@@ -133,24 +139,24 @@ export default function MultiStepForm() {
             {step === 1 && (
               <>
                 <div>
-                  <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-1">Lokasi & Kategori</h3>
-                  <p className="text-sm text-slate-500 dark:text-slate-400">Tentukan lokasi dan jenis kerusakan</p>
+                  <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-1">{t("reports.step2.title")}</h3>
+                  <p className="text-sm text-slate-500 dark:text-slate-400">{t("reports.step2.subtitle")}</p>
                 </div>
                 <Input
-                  label="Lokasi"
-                  placeholder="Contoh: Gedung A, Lantai 3, Ruang 301"
+                  label={t("reports.location")}
+                  placeholder={t("reports.step2.locationPlaceholder")}
                   value={form.location}
                   onChange={(e) => update("location", e.target.value)}
                 />
                 <Select
-                  label="Kategori"
+                  label={t("reports.category")}
                   options={categories}
-                  placeholder="Pilih kategori kerusakan"
+                  placeholder={t("reports.step2.categoryPlaceholder")}
                   value={form.category}
                   onChange={(e) => update("category", e.target.value)}
                 />
                 <Select
-                  label="Prioritas"
+                  label={t("reports.priority")}
                   options={priorities}
                   value={form.priority}
                   onChange={(e) => update("priority", e.target.value)}
@@ -161,18 +167,18 @@ export default function MultiStepForm() {
             {step === 2 && (
               <>
                 <div>
-                  <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-1">Detail Kerusakan</h3>
-                  <p className="text-sm text-slate-500 dark:text-slate-400">Jelaskan kerusakan secara detail</p>
+                  <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-1">{t("reports.step3.title")}</h3>
+                  <p className="text-sm text-slate-500 dark:text-slate-400">{t("reports.step3.subtitle")}</p>
                 </div>
                 <Textarea
-                  label="Deskripsi"
-                  placeholder="Jelaskan kerusakan yang terjadi secara detail..."
+                  label={t("reports.description")}
+                  placeholder={t("reports.step3.placeholder")}
                   rows={5}
                   value={form.description}
                   onChange={(e) => update("description", e.target.value)}
                 />
                 <Input
-                  label="Tanggal Kejadian"
+                  label={t("reports.incidentDate")}
                   type="date"
                   value={form.date}
                   onChange={(e) => update("date", e.target.value)}
@@ -183,8 +189,8 @@ export default function MultiStepForm() {
             {step === 3 && (
               <>
                 <div>
-                  <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-1">Foto Bukti</h3>
-                  <p className="text-sm text-slate-500 dark:text-slate-400">Upload foto sebagai bukti kerusakan (opsional)</p>
+                  <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-1">{t("reports.step4.title")}</h3>
+                  <p className="text-sm text-slate-500 dark:text-slate-400">{t("reports.step4.subtitle")}</p>
                 </div>
                 <FileUpload
                   onUpload={(urls) => update("photos", urls)}
@@ -201,13 +207,13 @@ export default function MultiStepForm() {
             onClick={() => setStep((s) => Math.max(s - 1, 0))}
             disabled={step === 0}
           >
-            Sebelumnya
+            {t("reports.previous")}
           </Button>
           {step < 3 ? (
-            <Button onClick={next}>Selanjutnya</Button>
+            <Button onClick={next}>{t("reports.next")}</Button>
           ) : (
             <Button onClick={submit} loading={loading}>
-              Kirim Laporan
+              {t("reports.submitReport")}
             </Button>
           )}
         </div>

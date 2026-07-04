@@ -10,6 +10,7 @@ import StatusChart from "@/components/charts/StatusChart";
 import Badge from "@/components/ui/Badge";
 import Button from "@/components/ui/Button";
 import Skeleton from "@/components/ui/Skeleton";
+import { useTranslation } from "@/lib/i18n";
 
 interface Stats {
   total: number;
@@ -36,11 +37,19 @@ interface ChatInfo {
 }
 
 export default function AdminDashboardPage() {
+  const { t } = useTranslation();
   const [stats, setStats] = useState<Stats | null>(null);
   const [monthly, setMonthly] = useState<{ month: string; count: number }[]>([]);
   const [recent, setRecent] = useState<Report[]>([]);
   const [chatInfo, setChatInfo] = useState<ChatInfo>({ totalMessages: 0, unreadFromUsers: 0 });
   const [loading, setLoading] = useState(true);
+
+  const priorityKey: Record<string, string> = {
+    Rendah: "reports.priorities.low",
+    Sedang: "reports.priorities.medium",
+    Tinggi: "reports.priorities.high",
+    Darurat: "reports.priorities.urgent",
+  };
 
   useEffect(() => {
     Promise.all([
@@ -74,13 +83,13 @@ export default function AdminDashboardPage() {
   return (
     <div>
       <Topbar
-        title="Admin Dashboard"
-        subtitle="Overview seluruh sistem pelaporan"
+        title={t("nav.dashboard")}
+        subtitle={t("admin.overview")}
         actions={
           <Link href="/admin/laporan">
             <Button>
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" /></svg>
-              Kelola Laporan
+              {t("admin.manageReports")}
             </Button>
           </Link>
         }
@@ -98,14 +107,14 @@ export default function AdminDashboardPage() {
             </div>
             <div className="flex-1">
               <p className="text-sm font-semibold text-amber-800 dark:text-amber-300">
-                {stats.menunggu} laporan baru menunggu verifikasi
+                {t("admin.newReports").replace("{n}", String(stats.menunggu))}
               </p>
               <p className="text-xs text-amber-600 dark:text-amber-400/70">
-                Segera proses laporan ini agar pengguna tidak menunggu terlalu lama.
+                {t("admin.processNow")}
               </p>
             </div>
             <Link href="/admin/laporan?status=Menunggu">
-              <Button size="sm" className="shrink-0">Proses Sekarang</Button>
+              <Button size="sm" className="shrink-0">{t("admin.processNowButton")}</Button>
             </Link>
           </div>
         </motion.div>
@@ -119,10 +128,10 @@ export default function AdminDashboardPage() {
             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-white shadow-lg shadow-blue-500/25">
               <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
             </div>
-            <span className="text-xs text-blue-600 dark:text-blue-400 font-medium">Total</span>
+            <span className="text-xs text-blue-600 dark:text-blue-400 font-medium">{t("admin.total")}</span>
           </div>
           <p className="text-3xl font-bold text-slate-900 dark:text-white">{stats?.total || 0}</p>
-          <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">Laporan masuk</p>
+          <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">{t("admin.reportsIn")}</p>
         </motion.div>
 
         {/* Perlu Diproses */}
@@ -134,7 +143,7 @@ export default function AdminDashboardPage() {
             {stats && stats.menunggu > 0 && <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />}
           </div>
           <p className="text-3xl font-bold text-amber-600 dark:text-amber-400">{stats?.menunggu || 0}</p>
-          <p className="text-xs text-amber-600/70 dark:text-amber-400/70 mt-1">Perlu diproses</p>
+          <p className="text-xs text-amber-600/70 dark:text-amber-400/70 mt-1">{t("admin.needsProcessing")}</p>
         </motion.div>
 
         {/* Sedang Dikerjakan */}
@@ -145,7 +154,7 @@ export default function AdminDashboardPage() {
             </div>
           </div>
           <p className="text-3xl font-bold text-blue-600 dark:text-blue-400">{stats?.diproses || 0}</p>
-          <p className="text-xs text-blue-600/70 dark:text-blue-400/70 mt-1">Sedang dikerjakan</p>
+          <p className="text-xs text-blue-600/70 dark:text-blue-400/70 mt-1">{t("admin.beingProcessed")}</p>
         </motion.div>
 
         {/* Chat Masuk */}
@@ -157,7 +166,7 @@ export default function AdminDashboardPage() {
             {chatInfo.unreadFromUsers > 0 && <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />}
           </div>
           <p className="text-3xl font-bold text-emerald-600 dark:text-emerald-400">{chatInfo.totalMessages}</p>
-          <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">Total chat</p>
+          <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">{t("admin.totalChat")}</p>
         </motion.div>
       </div>
 
@@ -165,45 +174,45 @@ export default function AdminDashboardPage() {
       <div className="grid grid-cols-3 gap-4 mb-8">
         <motion.div whileHover={{ y: -1 }} className="p-4 rounded-2xl bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-200/80 dark:border-emerald-800/30 text-center">
           <p className="text-2xl font-bold text-emerald-600 dark:text-emerald-400">{stats?.selesai || 0}</p>
-          <p className="text-xs text-emerald-600/70 dark:text-emerald-400/70 mt-1">Selesai</p>
+          <p className="text-xs text-emerald-600/70 dark:text-emerald-400/70 mt-1">{t("dashboard.completed")}</p>
         </motion.div>
         <motion.div whileHover={{ y: -1 }} className="p-4 rounded-2xl bg-red-50 dark:bg-red-950/20 border border-red-200/80 dark:border-red-800/30 text-center">
           <p className="text-2xl font-bold text-red-600 dark:text-red-400">{stats?.ditolak || 0}</p>
-          <p className="text-xs text-red-600/70 dark:text-red-400/70 mt-1">Ditolak</p>
+          <p className="text-xs text-red-600/70 dark:text-red-400/70 mt-1">{t("dashboard.rejected")}</p>
         </motion.div>
         <motion.div whileHover={{ y: -1 }} className="p-4 rounded-2xl bg-purple-50 dark:bg-purple-950/20 border border-purple-200/80 dark:border-purple-800/30 text-center">
           <p className="text-2xl font-bold text-purple-600 dark:text-purple-400">{stats?.thisMonth || 0}</p>
-          <p className="text-xs text-purple-600/70 dark:text-purple-400/70 mt-1">Bulan ini</p>
+          <p className="text-xs text-purple-600/70 dark:text-purple-400/70 mt-1">{t("admin.thisMonth")}</p>
         </motion.div>
       </div>
 
       {/* Charts */}
       <div className="grid lg:grid-cols-3 gap-6 mb-8">
         <Card className="p-6 lg:col-span-2">
-          <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-6">Laporan per Bulan</h3>
-          {monthly.length > 0 ? <ReportsChart data={monthly} /> : <div className="h-64 flex items-center justify-center text-sm text-slate-400">Belum ada data</div>}
+          <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-6">{t("dashboard.monthlyChart")}</h3>
+          {monthly.length > 0 ? <ReportsChart data={monthly} /> : <div className="h-64 flex items-center justify-center text-sm text-slate-400">{t("dashboard.noData")}</div>}
         </Card>
         <Card className="p-6">
-          <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-6">Distribusi Status</h3>
+          <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-6">{t("admin.statusDistribution")}</h3>
           {stats && (stats.menunggu + stats.diproses + stats.selesai + stats.ditolak) > 0 ? (
             <StatusChart data={[
-              { label: "Menunggu", value: stats.menunggu || 0, color: "#F59E0B" },
-              { label: "Diproses", value: stats.diproses || 0, color: "#3B82F6" },
-              { label: "Selesai", value: stats.selesai || 0, color: "#10B981" },
-              { label: "Ditolak", value: stats.ditolak || 0, color: "#EF4444" },
+              { label: t("dashboard.pending"), value: stats.menunggu || 0, color: "#F59E0B" },
+              { label: t("dashboard.processing"), value: stats.diproses || 0, color: "#3B82F6" },
+              { label: t("dashboard.completed"), value: stats.selesai || 0, color: "#10B981" },
+              { label: t("dashboard.rejected"), value: stats.ditolak || 0, color: "#EF4444" },
             ]} />
-          ) : <div className="h-56 flex items-center justify-center text-sm text-slate-400">Belum ada data</div>}
+          ) : <div className="h-56 flex items-center justify-center text-sm text-slate-400">{t("dashboard.noData")}</div>}
         </Card>
       </div>
 
       {/* Recent Reports */}
       <Card className="p-6">
         <div className="flex items-center justify-between mb-6">
-          <h3 className="text-lg font-semibold text-slate-900 dark:text-white">Laporan Terbaru</h3>
-          <Link href="/admin/laporan"><Button variant="ghost" size="sm">Lihat Semua</Button></Link>
+          <h3 className="text-lg font-semibold text-slate-900 dark:text-white">{t("dashboard.recentReports")}</h3>
+          <Link href="/admin/laporan"><Button variant="ghost" size="sm">{t("dashboard.viewAll")}</Button></Link>
         </div>
         {recent.length === 0 ? (
-          <p className="text-center text-slate-500 py-8">Belum ada laporan</p>
+          <p className="text-center text-slate-500 py-8">{t("dashboard.noReports")}</p>
         ) : (
           <div className="space-y-2">
             {recent.map((r) => {
@@ -224,7 +233,7 @@ export default function AdminDashboardPage() {
                   </div>
                   <div className="flex items-center gap-2 shrink-0">
                     <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-semibold ${priorityColors[r.priority] || priorityColors.Sedang}`}>
-                      {r.priority}
+                      {t(priorityKey[r.priority] || "reports.priorities.medium")}
                     </span>
                     <Badge status={r.status} />
                   </div>

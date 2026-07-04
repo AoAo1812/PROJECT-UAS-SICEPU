@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
@@ -12,6 +12,7 @@ import Select from "@/components/ui/Select";
 import Textarea from "@/components/ui/Textarea";
 import Skeleton from "@/components/ui/Skeleton";
 import ChatPanel from "@/components/chat/ChatPanel";
+import { useTranslation } from "@/lib/i18n";
 
 interface Report {
   id: string;
@@ -30,9 +31,9 @@ interface Report {
 }
 
 const statusFlow = [
-  { key: "Menunggu", label: "Menunggu", desc: "Laporan diterima", icon: "M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" },
-  { key: "Diproses", label: "Diproses", desc: "Tim teknis bekerja", icon: "M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" },
-  { key: "Selesai", label: "Selesai", desc: "Kerusakan diperbaiki", icon: "M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" },
+  { key: "Menunggu", labelKey: "reports.statusPendingDesc", descKey: "reports.statusPendingInfo", icon: "M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" },
+  { key: "Diproses", labelKey: "reports.statusProcessingDesc", descKey: "reports.statusProcessingInfo", icon: "M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" },
+  { key: "Selesai", labelKey: "reports.statusCompletedDesc", descKey: "reports.statusCompletedInfo", icon: "M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" },
 ];
 
 const priorityColors: Record<string, string> = {
@@ -45,6 +46,7 @@ const priorityColors: Record<string, string> = {
 export default function AdminLaporanDetailPage() {
   const params = useParams();
   const router = useRouter();
+  const { t } = useTranslation();
   const [report, setReport] = useState<Report | null>(null);
   const [loading, setLoading] = useState(true);
   const [status, setStatus] = useState("Menunggu");
@@ -52,6 +54,29 @@ export default function AdminLaporanDetailPage() {
   const [saving, setSaving] = useState(false);
   const [rejectMode, setRejectMode] = useState(false);
   const [rejectReason, setRejectReason] = useState("");
+  const rejectRef = useRef<HTMLTextAreaElement>(null);
+
+  useEffect(() => {
+    if (rejectMode && rejectRef.current) {
+      rejectRef.current.focus();
+    }
+  }, [rejectMode]);
+
+  const priorityKey: Record<string, string> = {
+    Rendah: "reports.priorities.low",
+    Sedang: "reports.priorities.medium",
+    Tinggi: "reports.priorities.high",
+    Darurat: "reports.priorities.urgent",
+  };
+
+  const categoryKey: Record<string, string> = {
+    Listrik: "reports.categories.electrical",
+    Plumbing: "reports.categories.plumbing",
+    Furniture: "reports.categories.furniture",
+    "IT/Komputer": "reports.categories.it",
+    Bangunan: "reports.categories.building",
+    Lainnya: "reports.categories.other",
+  };
 
   useEffect(() => {
     fetch(`/api/reports/${params.id}`)
@@ -72,10 +97,10 @@ export default function AdminLaporanDetailPage() {
       body: JSON.stringify({ status, adminNote }),
     });
     if (res.ok) {
-      toast.success("Laporan berhasil diperbarui");
+      toast.success(t("common.success"));
       setReport((prev) => prev ? { ...prev, status: status as Report["status"], adminNote } : null);
     } else {
-      toast.error("Gagal memperbarui");
+      toast.error(t("common.error"));
     }
     setSaving(false);
   };
@@ -91,13 +116,13 @@ export default function AdminLaporanDetailPage() {
       body: JSON.stringify({ status: "Ditolak", adminNote: rejectReason }),
     });
     if (res.ok) {
-      toast.success("Laporan ditolak");
+      toast.success(t("admin.reportRejected"));
       setReport((prev) => prev ? { ...prev, status: "Ditolak", adminNote: rejectReason } : null);
       setStatus("Ditolak");
       setRejectMode(false);
       setRejectReason("");
     } else {
-      toast.error("Gagal menolak laporan");
+      toast.error(t("common.error"));
     }
     setSaving(false);
   };
@@ -110,11 +135,11 @@ export default function AdminLaporanDetailPage() {
       body: JSON.stringify({ status: "Diproses", adminNote: adminNote || "Laporan sedang diproses oleh tim teknis" }),
     });
     if (res.ok) {
-      toast.success("Laporan sedang diproses");
+      toast.success(t("admin.processReport"));
       setReport((prev) => prev ? { ...prev, status: "Diproses", adminNote: adminNote || "Laporan sedang diproses oleh tim teknis" } : null);
       setStatus("Diproses");
     } else {
-      toast.error("Gagal memproses laporan");
+      toast.error(t("common.error"));
     }
     setSaving(false);
   };
@@ -127,11 +152,11 @@ export default function AdminLaporanDetailPage() {
       body: JSON.stringify({ status: "Selesai", adminNote: adminNote || "Kerusakan telah diperbaiki" }),
     });
     if (res.ok) {
-      toast.success("Laporan ditandai selesai");
+      toast.success(t("admin.reportComplete"));
       setReport((prev) => prev ? { ...prev, status: "Selesai", adminNote: adminNote || "Kerusakan telah diperbaiki" } : null);
       setStatus("Selesai");
     } else {
-      toast.error("Gagal menyelesaikan laporan");
+      toast.error(t("common.error"));
     }
     setSaving(false);
   };
@@ -140,7 +165,7 @@ export default function AdminLaporanDetailPage() {
     if (!confirm("Yakin ingin menghapus laporan ini?")) return;
     const res = await fetch(`/api/reports/${params.id}`, { method: "DELETE" });
     if (res.ok) {
-      toast.success("Laporan berhasil dihapus");
+      toast.success(t("common.success"));
       router.push("/admin/laporan");
     }
   };
@@ -160,8 +185,8 @@ export default function AdminLaporanDetailPage() {
   if (!report) {
     return (
       <div className="text-center py-20">
-        <p className="text-slate-500">Laporan tidak ditemukan</p>
-        <Button onClick={() => router.push("/admin/laporan")} className="mt-4">Kembali</Button>
+        <p className="text-slate-500">{t("reports.notFound")}</p>
+        <Button onClick={() => router.push("/admin/laporan")} className="mt-4">{t("reports.backToListButton")}</Button>
       </div>
     );
   }
@@ -171,16 +196,16 @@ export default function AdminLaporanDetailPage() {
   return (
     <div>
       <Topbar
-        title="Kelola Laporan"
+        title={t("admin.manageReports")}
         actions={
           <div className="flex gap-2">
             <Button variant="secondary" size="sm" onClick={() => router.push("/admin/laporan")}>
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
-              Kembali
+              {t("common.back")}
             </Button>
             <Button variant="danger" size="sm" onClick={handleDelete}>
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
-              Hapus
+              {t("common.delete")}
             </Button>
           </div>
         }
@@ -197,7 +222,7 @@ export default function AdminLaporanDetailPage() {
                   <h2 className="text-xl font-bold text-slate-900 dark:text-white">{report.facilityName}</h2>
                   <Badge status={report.status} />
                   <span className={`text-xs px-2 py-0.5 rounded-full font-bold ${priorityColors[report.priority] || priorityColors.Sedang}`}>
-                    {report.priority}
+                    {t(priorityKey[report.priority] || "reports.priorities.medium")}
                   </span>
                 </div>
                 <p className="text-sm text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
@@ -209,20 +234,20 @@ export default function AdminLaporanDetailPage() {
               </div>
             </div>
             <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/50 mb-4">
-              <p className="text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">Deskripsi</p>
+              <p className="text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">{t("reports.damageDescription")}</p>
               <p className="text-sm text-slate-700 dark:text-slate-300">{report.description}</p>
             </div>
             <div className="grid grid-cols-3 gap-4">
               <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50">
-                <p className="text-xs text-slate-500 dark:text-slate-400">Pelapor</p>
+                <p className="text-xs text-slate-500 dark:text-slate-400">{t("reports.reporter")}</p>
                 <p className="text-sm font-semibold text-slate-900 dark:text-white">{report.userName}</p>
               </div>
               <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50">
-                <p className="text-xs text-slate-500 dark:text-slate-400">Kategori</p>
-                <p className="text-sm font-semibold text-slate-900 dark:text-white">{report.category}</p>
+                <p className="text-xs text-slate-500 dark:text-slate-400">{t("reports.category")}</p>
+                <p className="text-sm font-semibold text-slate-900 dark:text-white">{t(categoryKey[report.category] || "reports.categories.other")}</p>
               </div>
               <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50">
-                <p className="text-xs text-slate-500 dark:text-slate-400">Tanggal</p>
+                <p className="text-xs text-slate-500 dark:text-slate-400">{t("reports.date")}</p>
                 <p className="text-sm font-semibold text-slate-900 dark:text-white">{new Date(report.date).toLocaleDateString("id-ID")}</p>
               </div>
             </div>
@@ -231,7 +256,7 @@ export default function AdminLaporanDetailPage() {
           {/* Photos */}
           {report.photos && report.photos.length > 0 && (
             <Card className="p-6">
-              <h3 className="text-sm font-semibold text-slate-500 dark:text-slate-400 mb-4 uppercase tracking-wider">Foto Bukti ({report.photos.length})</h3>
+              <h3 className="text-sm font-semibold text-slate-500 dark:text-slate-400 mb-4 uppercase tracking-wider">{t("reports.photoEvidence").replace("{n}", String(report.photos.length))}</h3>
               <div className="grid grid-cols-3 gap-3">
                 {report.photos.map((photo, i) => (
                   <img key={i} src={photo} alt={`Bukti ${i + 1}`} className="w-full h-32 object-cover rounded-xl border border-slate-200 dark:border-slate-700" />
@@ -243,7 +268,7 @@ export default function AdminLaporanDetailPage() {
           {/* Timeline */}
           {report.status !== "Ditolak" && (
             <Card className="p-6">
-              <h3 className="text-sm font-semibold text-slate-500 dark:text-slate-400 mb-6 uppercase tracking-wider">Timeline Status</h3>
+              <h3 className="text-sm font-semibold text-slate-500 dark:text-slate-400 mb-6 uppercase tracking-wider">{t("reports.timeline")}</h3>
               <div className="space-y-0">
                 {statusFlow.map((s, i) => {
                   const isCompleted = currentIdx > i;
@@ -270,8 +295,8 @@ export default function AdminLaporanDetailPage() {
                         )}
                       </div>
                       <div className={`pb-6 pt-2 ${isFuture ? "opacity-40" : ""}`}>
-                        <p className={`text-sm font-semibold ${isCurrent ? "text-blue-600 dark:text-blue-400" : "text-slate-900 dark:text-white"}`}>{s.label}</p>
-                        <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{s.desc}</p>
+                        <p className={`text-sm font-semibold ${isCurrent ? "text-blue-600 dark:text-blue-400" : "text-slate-900 dark:text-white"}`}>{t(s.labelKey)}</p>
+                        <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{t(s.descKey)}</p>
                       </div>
                     </div>
                   );
@@ -287,8 +312,8 @@ export default function AdminLaporanDetailPage() {
                   <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
                 </div>
                 <div>
-                  <p className="text-sm font-semibold text-red-700 dark:text-red-400">Laporan Ditolak</p>
-                  <p className="text-xs text-red-600 dark:text-red-400/70">{report.adminNote || "Tidak ada catatan"}</p>
+                  <p className="text-sm font-semibold text-red-700 dark:text-red-400">{t("admin.reportRejected")}</p>
+                  <p className="text-xs text-red-600 dark:text-red-400/70">{report.adminNote || t("admin.noNote")}</p>
                 </div>
               </div>
             </Card>
@@ -304,17 +329,34 @@ export default function AdminLaporanDetailPage() {
         <div className="space-y-6">
           {/* Quick Actions */}
           <Card className="p-6">
-            <h3 className="text-sm font-semibold text-slate-500 dark:text-slate-400 mb-4 uppercase tracking-wider">Aksi Cepat</h3>
+            <h3 className="text-sm font-semibold text-slate-500 dark:text-slate-400 mb-4 uppercase tracking-wider">{t("reports.quickActions")}</h3>
             <div className="space-y-3">
+              <button
+                onClick={() => {
+                  const printWindow = window.open(`/laporan/${report.id}/print`, "_blank");
+                  if (printWindow) printWindow.onload = () => printWindow.print();
+                }}
+                className="flex items-center gap-3 p-3 rounded-xl hover:bg-amber-50 dark:hover:bg-amber-900/10 transition-colors w-full text-left"
+              >
+                <div className="w-9 h-9 rounded-lg bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center shrink-0">
+                  <svg className="w-4 h-4 text-amber-600 dark:text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+                  </svg>
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-slate-900 dark:text-white">{t("reports.print")}</p>
+                  <p className="text-xs text-slate-500 dark:text-slate-400">{t("reports.downloadPdf")}</p>
+                </div>
+              </button>
               {report.status === "Menunggu" && (
                 <>
                   <Button onClick={handleProcess} loading={saving} className="w-full" size="lg">
                     <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
-                    Proses Laporan
+                    {t("admin.processReport")}
                   </Button>
                   <Button onClick={() => setRejectMode(true)} variant="danger" className="w-full" size="lg">
                     <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
-                    Tolak Laporan
+                    {t("admin.rejectReport")}
                   </Button>
                 </>
               )}
@@ -322,26 +364,26 @@ export default function AdminLaporanDetailPage() {
                 <>
                   <Button onClick={handleComplete} loading={saving} className="w-full" size="lg">
                     <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                    Tandai Selesai
+                    {t("admin.markComplete")}
                   </Button>
                   <Button onClick={() => setRejectMode(true)} variant="danger" className="w-full" size="lg">
                     <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
-                    Tolak Laporan
+                    {t("admin.rejectReport")}
                   </Button>
                 </>
               )}
               {report.status === "Selesai" && (
                 <div className="p-4 rounded-xl bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800/30 text-center">
                   <svg className="w-8 h-8 text-emerald-500 mx-auto mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                  <p className="text-sm font-semibold text-emerald-700 dark:text-emerald-400">Laporan Selesai</p>
-                  <p className="text-xs text-emerald-600 dark:text-emerald-400/70">Perbaikan telah dilakukan</p>
+                  <p className="text-sm font-semibold text-emerald-700 dark:text-emerald-400">{t("admin.reportComplete")}</p>
+                  <p className="text-xs text-emerald-600 dark:text-emerald-400/70">{t("admin.repairDone")}</p>
                 </div>
               )}
               {report.status === "Ditolak" && (
                 <div className="p-4 rounded-xl bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800/30 text-center">
                   <svg className="w-8 h-8 text-red-500 mx-auto mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
-                  <p className="text-sm font-semibold text-red-700 dark:text-red-400">Laporan Ditolak</p>
-                  <p className="text-xs text-red-600 dark:text-red-400/70">{report.adminNote || "Tanpa catatan"}</p>
+                  <p className="text-sm font-semibold text-red-700 dark:text-red-400">{t("admin.reportRejected")}</p>
+                  <p className="text-xs text-red-600 dark:text-red-400/70">{report.adminNote || t("admin.noNote")}</p>
                 </div>
               )}
             </div>
@@ -350,16 +392,18 @@ export default function AdminLaporanDetailPage() {
           {/* Reject Modal (inline) */}
           {rejectMode && (
             <Card className="p-6 border-red-200 dark:border-red-800/30">
-              <h3 className="text-sm font-semibold text-red-600 dark:text-red-400 mb-3">Alasan Penolakan</h3>
-              <Textarea
-                placeholder="Jelaskan alasan penolakan..."
+              <h3 className="text-sm font-semibold text-red-600 dark:text-red-400 mb-3">{t("admin.rejectReason")}</h3>
+              <textarea
+                ref={rejectRef}
+                placeholder={t("admin.rejectReasonPlaceholder")}
                 rows={3}
                 value={rejectReason}
                 onChange={(e) => setRejectReason(e.target.value)}
+                className="w-full px-3 py-2 rounded-lg bg-[var(--background)] border border-[var(--border-color)] text-sm text-[var(--foreground)] placeholder:text-[var(--foreground)]/30 focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all duration-200 resize-none"
               />
               <div className="flex gap-2 mt-3">
-                <Button variant="ghost" size="sm" onClick={() => { setRejectMode(false); setRejectReason(""); }} className="flex-1">Batal</Button>
-                <Button variant="danger" size="sm" onClick={handleReject} loading={saving} className="flex-1">Tolak</Button>
+                <Button variant="ghost" size="sm" onClick={() => { setRejectMode(false); setRejectReason(""); }} className="flex-1">{t("common.cancel")}</Button>
+                <Button variant="danger" size="sm" onClick={handleReject} loading={saving} className="flex-1">{t("admin.rejectButton")}</Button>
               </div>
             </Card>
           )}
@@ -367,7 +411,7 @@ export default function AdminLaporanDetailPage() {
           {/* Admin Notes */}
           {report.adminNote && !rejectMode && (
             <Card className="p-6">
-              <h3 className="text-sm font-semibold text-slate-500 dark:text-slate-400 mb-3 uppercase tracking-wider">Catatan Admin</h3>
+              <h3 className="text-sm font-semibold text-slate-500 dark:text-slate-400 mb-3 uppercase tracking-wider">{t("admin.adminNoteLabel")}</h3>
               <div className="p-4 rounded-xl bg-blue-50 dark:bg-blue-900/20 border border-blue-200/50 dark:border-blue-800/30">
                 <p className="text-sm text-slate-700 dark:text-slate-300">{report.adminNote}</p>
               </div>
@@ -376,18 +420,18 @@ export default function AdminLaporanDetailPage() {
 
           {/* Info */}
           <Card className="p-6">
-            <h3 className="text-sm font-semibold text-slate-500 dark:text-slate-400 mb-4 uppercase tracking-wider">Informasi</h3>
+            <h3 className="text-sm font-semibold text-slate-500 dark:text-slate-400 mb-4 uppercase tracking-wider">{t("reports.statusInfoTitle")}</h3>
             <div className="space-y-3">
               <div className="flex justify-between py-2 border-b border-slate-100 dark:border-slate-800 last:border-0">
-                <span className="text-sm text-slate-500 dark:text-slate-400">Pelapor</span>
+                <span className="text-sm text-slate-500 dark:text-slate-400">{t("reports.reporter")}</span>
                 <span className="text-sm font-medium text-slate-900 dark:text-white">{report.userName}</span>
               </div>
               <div className="flex justify-between py-2 border-b border-slate-100 dark:border-slate-800 last:border-0">
-                <span className="text-sm text-slate-500 dark:text-slate-400">Dibuat</span>
+                <span className="text-sm text-slate-500 dark:text-slate-400">{t("reports.createdAt")}</span>
                 <span className="text-sm text-slate-700 dark:text-slate-300">{new Date(report.createdAt).toLocaleDateString("id-ID")}</span>
               </div>
               <div className="flex justify-between py-2">
-                <span className="text-sm text-slate-500 dark:text-slate-400">Update</span>
+                <span className="text-sm text-slate-500 dark:text-slate-400">{t("reports.lastUpdate")}</span>
                 <span className="text-sm text-slate-700 dark:text-slate-300">{new Date(report.updatedAt).toLocaleDateString("id-ID")}</span>
               </div>
             </div>

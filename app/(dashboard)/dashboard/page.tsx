@@ -11,6 +11,7 @@ import StatusChart from "@/components/charts/StatusChart";
 import Badge from "@/components/ui/Badge";
 import Button from "@/components/ui/Button";
 import Skeleton from "@/components/ui/Skeleton";
+import { useTranslation } from "@/lib/i18n";
 
 interface Stats {
   total: number;
@@ -30,21 +31,23 @@ interface Report {
 }
 
 export default function DashboardPage() {
+  const { t } = useTranslation();
   const [stats, setStats] = useState<Stats | null>(null);
   const [monthly, setMonthly] = useState<{ month: string; count: number }[]>([]);
   const [recent, setRecent] = useState<Report[]>([]);
   const [loading, setLoading] = useState(true);
+  const [period, setPeriod] = useState<"weekly" | "monthly" | "yearly">("monthly");
 
   useEffect(() => {
     Promise.all([
-      fetch("/api/reports/stats").then((r) => r.json()),
+      fetch(`/api/reports/stats?period=${period}`).then((r) => r.json()),
       fetch("/api/reports?limit=5").then((r) => r.json()),
     ]).then(([statsData, reportsData]) => {
       setStats(statsData.stats);
       setMonthly(statsData.monthly || []);
       setRecent(reportsData.reports || []);
     }).finally(() => setLoading(false));
-  }, []);
+  }, [period]);
 
   if (loading) {
     return (
@@ -64,15 +67,15 @@ export default function DashboardPage() {
   return (
     <div>
       <Topbar
-        title="Dashboard"
-        subtitle="Selamat datang kembali! Berikut ringkasan laporan Anda."
+        title={t("nav.dashboard")}
+        subtitle={t("dashboard.welcomeBack") + " " + t("dashboard.summary")}
         actions={
           <Link href="/laporan/baru">
             <Button>
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
               </svg>
-              Buat Laporan
+              "+ " + t("reports.create")
             </Button>
           </Link>
         }
@@ -80,13 +83,13 @@ export default function DashboardPage() {
 
       {/* Stats */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-        <StatCard title="Total Laporan" value={stats?.total || 0} color="blue"
+        <StatCard title={t("dashboard.totalReports")} value={stats?.total || 0} color="blue"
           icon={<svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>} />
-        <StatCard title="Menunggu" value={stats?.menunggu || 0} color="amber" trend={stats?.menunggu ? `${stats.menunggu} perlu ditindak` : undefined}
+        <StatCard title={t("dashboard.pending")} value={stats?.menunggu || 0} color="amber" trend={stats?.menunggu ? `${stats.menunggu} ${t("dashboard.pendingTrend")}` : undefined}
           icon={<svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>} />
-        <StatCard title="Diproses" value={stats?.diproses || 0} color="purple" trend={stats?.diproses ? `${stats.diproses} sedang dikerjakan` : undefined}
+        <StatCard title={t("dashboard.processing")} value={stats?.diproses || 0} color="purple" trend={stats?.diproses ? `${stats.diproses} ${t("dashboard.processingTrend")}` : undefined}
           icon={<svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>} />
-        <StatCard title="Selesai" value={stats?.selesai || 0} color="green" trend={stats?.selesai ? `${stats.selesai} sudah selesai` : undefined}
+        <StatCard title={t("dashboard.completed")} value={stats?.selesai || 0} color="green" trend={stats?.selesai ? `${stats.selesai} ${t("dashboard.completedTrend")}` : undefined}
           icon={<svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>} />
       </div>
 
@@ -105,14 +108,14 @@ export default function DashboardPage() {
             </div>
             <div className="flex-1">
               <p className="text-sm font-semibold text-amber-800 dark:text-amber-300">
-                Anda memiliki {stats.menunggu} laporan yang menunggu verifikasi
+                {t("dashboard.pendingAlert").replace("{n}", String(stats.menunggu))}
               </p>
               <p className="text-xs text-amber-600 dark:text-amber-400/70">
-                Admin akan segera memproses laporan Anda. Pantau statusnya di Daftar Laporan.
+                {t("dashboard.pendingAlertDesc")}
               </p>
             </div>
             <Link href="/laporan?status=Menunggu">
-              <Button variant="secondary" size="sm" className="shrink-0">Lihat</Button>
+              <Button variant="secondary" size="sm" className="shrink-0">{t("dashboard.view")}</Button>
             </Link>
           </div>
         </motion.div>
@@ -133,14 +136,14 @@ export default function DashboardPage() {
             </div>
             <div className="flex-1">
               <p className="text-sm font-semibold text-blue-800 dark:text-blue-300">
-                {stats.diproses} laporan sedang dalam proses perbaikan
+                {t("dashboard.processingAlert").replace("{n}", String(stats.diproses))}
               </p>
               <p className="text-xs text-blue-600 dark:text-blue-400/70">
-                Tim teknis sedang menangani laporan Anda. Pantau perkembangannya.
+                {t("dashboard.processingAlertDesc")}
               </p>
             </div>
             <Link href="/laporan?status=Diproses">
-              <Button variant="secondary" size="sm" className="shrink-0">Lihat</Button>
+              <Button variant="secondary" size="sm" className="shrink-0">{t("dashboard.view")}</Button>
             </Link>
           </div>
         </motion.div>
@@ -150,28 +153,43 @@ export default function DashboardPage() {
       <div className="grid lg:grid-cols-3 gap-6 mb-8">
         <Card className="p-6 lg:col-span-2">
           <div className="flex items-center justify-between mb-6">
-            <h3 className="text-lg font-semibold text-slate-900 dark:text-white">Laporan per Bulan</h3>
+            <h3 className="text-lg font-semibold text-slate-900 dark:text-white">{t("dashboard.chartTitle")}</h3>
+            <div className="flex items-center gap-1 p-1 rounded-lg bg-slate-100 dark:bg-slate-800">
+              {(["weekly", "monthly", "yearly"] as const).map((p) => (
+                <button
+                  key={p}
+                  onClick={() => setPeriod(p)}
+                  className={`px-3 py-1 rounded-md text-xs font-medium transition-all ${
+                    period === p
+                      ? "bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-sm"
+                      : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300"
+                  }`}
+                >
+                  {t(`dashboard.period.${p}`)}
+                </button>
+              ))}
+            </div>
           </div>
           {monthly.length > 0 ? (
             <ReportsChart data={monthly} />
           ) : (
-            <div className="h-64 flex items-center justify-center text-sm text-slate-400">Belum ada data</div>
+            <div className="h-64 flex items-center justify-center text-sm text-slate-400">{t("dashboard.noData")}</div>
           )}
         </Card>
 
         <Card className="p-6">
-          <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-6">Status Laporan</h3>
+          <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-6">{t("dashboard.statusChart")}</h3>
           {stats && (stats.menunggu + stats.diproses + stats.selesai + stats.ditolak) > 0 ? (
             <StatusChart
               data={[
-                { label: "Menunggu", value: stats.menunggu || 0, color: "#F59E0B" },
-                { label: "Diproses", value: stats.diproses || 0, color: "#3B82F6" },
-                { label: "Selesai", value: stats.selesai || 0, color: "#10B981" },
-                { label: "Ditolak", value: stats.ditolak || 0, color: "#EF4444" },
+                { label: t("dashboard.pending"), value: stats.menunggu || 0, color: "#F59E0B" },
+                { label: t("dashboard.processing"), value: stats.diproses || 0, color: "#3B82F6" },
+                { label: t("dashboard.completed"), value: stats.selesai || 0, color: "#10B981" },
+                { label: t("dashboard.rejected"), value: stats.ditolak || 0, color: "#EF4444" },
               ]}
             />
           ) : (
-            <div className="h-56 flex items-center justify-center text-sm text-slate-400">Belum ada data</div>
+            <div className="h-56 flex items-center justify-center text-sm text-slate-400">{t("dashboard.noData")}</div>
           )}
         </Card>
       </div>
@@ -180,9 +198,9 @@ export default function DashboardPage() {
       <div className="grid lg:grid-cols-2 gap-6">
         <Card className="p-6">
           <div className="flex items-center justify-between mb-6">
-            <h3 className="text-lg font-semibold text-slate-900 dark:text-white">Laporan Terbaru</h3>
+            <h3 className="text-lg font-semibold text-slate-900 dark:text-white">{t("dashboard.recentReports")}</h3>
             <Link href="/laporan">
-              <Button variant="ghost" size="sm">Lihat Semua</Button>
+              <Button variant="ghost" size="sm">{t("dashboard.viewAll")}</Button>
             </Link>
           </div>
           {recent.length === 0 ? (
@@ -192,13 +210,13 @@ export default function DashboardPage() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                 </svg>
               </div>
-              <p className="text-sm font-medium text-slate-500 dark:text-slate-400 mb-3">Belum ada laporan</p>
+              <p className="text-sm font-medium text-slate-500 dark:text-slate-400 mb-3">{t("dashboard.noReports")}</p>
               <Link href="/laporan/baru">
                 <Button size="sm">
                   <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
                   </svg>
-                  Buat Laporan Pertama
+                  {t("dashboard.createFirst")}
                 </Button>
               </Link>
             </div>
@@ -231,7 +249,7 @@ export default function DashboardPage() {
         {/* Activity Timeline */}
         <Card className="p-6">
           <div className="flex items-center justify-between mb-6">
-            <h3 className="text-lg font-semibold text-slate-900 dark:text-white">Aktivitas Terkini</h3>
+            <h3 className="text-lg font-semibold text-slate-900 dark:text-white">{t("dashboard.recentActivity")}</h3>
           </div>
           {recent.length === 0 ? (
             <div className="text-center py-8">
@@ -240,7 +258,7 @@ export default function DashboardPage() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
               </div>
-              <p className="text-sm text-slate-500 dark:text-slate-400">Belum ada aktivitas</p>
+              <p className="text-sm text-slate-500 dark:text-slate-400">{t("dashboard.noActivity")}</p>
             </div>
           ) : (
             <div className="space-y-0">
@@ -252,10 +270,10 @@ export default function DashboardPage() {
                   Ditolak: "bg-red-500",
                 };
                 const statusText: Record<string, string> = {
-                  Menunggu: "membuat laporan baru",
-                  Diproses: "laporan sedang diproses",
-                  Selesai: "laporan telah selesai",
-                  Ditolak: "laporan ditolak",
+                  Menunggu: t("dashboard.createdReport"),
+                  Diproses: t("dashboard.reportProcessing"),
+                  Selesai: t("dashboard.reportCompleted"),
+                  Ditolak: t("dashboard.reportRejected"),
                 };
 
                 return (

@@ -4,7 +4,7 @@ import { getUserByEmail } from "@/lib/db";
 
 export async function POST(request: NextRequest) {
   try {
-    const { email, password } = await request.json();
+    const { email, password, remember } = await request.json();
 
     if (!email || !password) {
       return Response.json({ error: "Email dan password harus diisi" }, { status: 400 });
@@ -30,9 +30,10 @@ export async function POST(request: NextRequest) {
       message: "Login berhasil",
     });
 
+    const maxAge = remember ? 30 * 24 * 60 * 60 : 7 * 24 * 60 * 60;
     response.headers.set(
       "Set-Cookie",
-      `token=${token}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${7 * 24 * 60 * 60}`
+      `token=${token}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${maxAge}`
     );
 
     return response;

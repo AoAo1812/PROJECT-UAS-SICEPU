@@ -47,7 +47,7 @@ export async function GET(request: NextRequest) {
   const totalPages = Math.ceil(total / limit);
   const paginated = reports.slice((page - 1) * limit, page * limit);
 
-  return Response.json({ reports: paginated, total, totalPages, page });
+  return Response.json({ reports: paginated, total, totalPages, page, hasMore: page < totalPages });
 }
 
 export async function POST(request: NextRequest) {

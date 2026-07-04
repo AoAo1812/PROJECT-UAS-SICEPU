@@ -4,6 +4,7 @@ import { useEffect, useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { motion } from "framer-motion";
+import { useTranslation } from "@/lib/i18n";
 import Topbar from "@/components/layout/Topbar";
 import Button from "@/components/ui/Button";
 import Badge from "@/components/ui/Badge";
@@ -39,6 +40,7 @@ export default function LaporanPage() {
 }
 
 function LaporanContent() {
+  const { t } = useTranslation();
   const searchParams = useSearchParams();
   const initialStatus = searchParams.get("status") || "";
   const [reports, setReports] = useState<Report[]>([]);
@@ -51,6 +53,7 @@ function LaporanContent() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (reports.length === 0) setLoading(true);
     Promise.all([
       fetch(`/api/reports?${new URLSearchParams({ page: String(page), limit: "10", ...(search ? { search } : {}), ...(statusFilter ? { status: statusFilter } : {}) })}`).then((r) => r.json()),
       fetch("/api/reports/stats").then((r) => r.json()),
@@ -60,7 +63,12 @@ function LaporanContent() {
       setTotalPages(reportsData.totalPages || 1);
       setStats(statsData.stats);
     }).finally(() => setLoading(false));
-  }, [page, search, statusFilter]);
+  }, [page, statusFilter]);
+
+  useEffect(() => {
+    const timeout = setTimeout(() => { setPage(1); }, 300);
+    return () => clearTimeout(timeout);
+  }, [search]);
 
   if (loading) {
     return (
@@ -77,7 +85,7 @@ function LaporanContent() {
   const columns = [
     {
       key: "facilityName",
-      label: "Fasilitas",
+      label: t("reports.facility"),
       render: (r: Report) => (
         <div className="flex items-center gap-3">
           {r.photos && r.photos.length > 0 ? (
@@ -96,15 +104,15 @@ function LaporanContent() {
         </div>
       ),
     },
-    { key: "category", label: "Kategori", render: (r: Report) => <span className="text-slate-600 dark:text-slate-400 text-sm">{r.category}</span> },
+    { key: "category", label: t("reports.category"), render: (r: Report) => <span className="text-slate-600 dark:text-slate-400 text-sm">{r.category}</span> },
     {
       key: "status",
-      label: "Status",
+      label: t("reports.status"),
       render: (r: Report) => <Badge status={r.status} />,
     },
     {
       key: "createdAt",
-      label: "Tanggal",
+      label: t("reports.date"),
       render: (r: Report) => (
         <span className="text-sm text-slate-500 dark:text-slate-400">
           {new Date(r.createdAt).toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "numeric" })}
@@ -121,7 +129,7 @@ function LaporanContent() {
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
             </svg>
-            Detail
+            {t("reports.detailButton")}
           </Button>
         </Link>
       ),
@@ -131,15 +139,15 @@ function LaporanContent() {
   return (
     <div>
       <Topbar
-        title="Daftar Laporan"
-        subtitle="Lihat dan pantau seluruh laporan yang telah Anda kirim"
+        title={t("reports.list")}
+        subtitle={t("reports.subtitle")}
         actions={
           <Link href="/laporan/baru">
             <Button>
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
               </svg>
-              Buat Laporan Baru
+              {"+ " + t("reports.createNew")}
             </Button>
           </Link>
         }
@@ -157,7 +165,7 @@ function LaporanContent() {
         >
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-xs font-medium text-slate-500 dark:text-slate-400">Menunggu</p>
+              <p className="text-xs font-medium text-slate-500 dark:text-slate-400">{t("dashboard.pending")}</p>
               <p className="text-2xl font-bold text-amber-600 dark:text-amber-400 mt-1">{stats?.menunggu || 0}</p>
             </div>
             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center text-white shadow-lg shadow-amber-500/25">
@@ -176,7 +184,7 @@ function LaporanContent() {
         >
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-xs font-medium text-slate-500 dark:text-slate-400">Diproses</p>
+              <p className="text-xs font-medium text-slate-500 dark:text-slate-400">{t("dashboard.processing")}</p>
               <p className="text-2xl font-bold text-blue-600 dark:text-blue-400 mt-1">{stats?.diproses || 0}</p>
             </div>
             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-white shadow-lg shadow-blue-500/25">
@@ -195,7 +203,7 @@ function LaporanContent() {
         >
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-xs font-medium text-slate-500 dark:text-slate-400">Selesai</p>
+              <p className="text-xs font-medium text-slate-500 dark:text-slate-400">{t("dashboard.completed")}</p>
               <p className="text-2xl font-bold text-emerald-600 dark:text-emerald-400 mt-1">{stats?.selesai || 0}</p>
             </div>
             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-600 flex items-center justify-center text-white shadow-lg shadow-emerald-500/25">
@@ -214,7 +222,7 @@ function LaporanContent() {
         >
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-xs font-medium text-slate-500 dark:text-slate-400">Ditolak</p>
+              <p className="text-xs font-medium text-slate-500 dark:text-slate-400">{t("dashboard.rejected")}</p>
               <p className="text-2xl font-bold text-red-600 dark:text-red-400 mt-1">{stats?.ditolak || 0}</p>
             </div>
             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-red-500 to-red-600 flex items-center justify-center text-white shadow-lg shadow-red-500/25">
@@ -233,7 +241,7 @@ function LaporanContent() {
             </svg>
           </div>
           <div className="text-sm text-slate-600 dark:text-slate-400">
-            <span className="font-medium text-slate-900 dark:text-white">Total {total} laporan</span> — Klik kartu status di atas untuk filter, atau klik <span className="font-medium text-blue-600 dark:text-blue-400">Detail</span> untuk melihat info lengkap laporan.
+            <span className="font-medium text-slate-900 dark:text-white">{t("reports.totalCount").replace("{total}", String(total))}</span> — {t("reports.clickCard")} <span className="font-medium text-blue-600 dark:text-blue-400">{t("reports.detailButton")}</span> {t("reports.forDetails")}
           </div>
         </div>
       </Card>
@@ -242,11 +250,11 @@ function LaporanContent() {
       <Card className="p-6">
         <div className="flex flex-wrap gap-2 mb-6">
           {[
-            { value: "", label: "Semua" },
-            { value: "Menunggu", label: "Menunggu", color: "amber" },
-            { value: "Diproses", label: "Diproses", color: "blue" },
-            { value: "Selesai", label: "Selesai", color: "emerald" },
-            { value: "Ditolak", label: "Ditolak", color: "red" },
+            { value: "", label: t("reports.all") },
+            { value: "Menunggu", label: t("dashboard.pending"), color: "amber" },
+            { value: "Diproses", label: t("dashboard.processing"), color: "blue" },
+            { value: "Selesai", label: t("dashboard.completed"), color: "emerald" },
+            { value: "Ditolak", label: t("dashboard.rejected"), color: "red" },
           ].map((s) => (
             <button
               key={s.value}
@@ -271,7 +279,13 @@ function LaporanContent() {
           onPageChange={setPage}
           search={search}
           onSearchChange={(v) => { setSearch(v); setPage(1); }}
-          searchPlaceholder="Cari nama fasilitas atau lokasi..."
+          searchPlaceholder={t("reports.searchPlaceholder")}
+          paginationLabels={{
+            previous: t("pagination.previous"),
+            next: t("pagination.next"),
+            page: t("pagination.page"),
+            of: t("pagination.of"),
+          }}
         />
       </Card>
     </div>

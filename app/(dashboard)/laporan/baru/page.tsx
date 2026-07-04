@@ -5,8 +5,10 @@ import { useRouter } from "next/navigation";
 import { useUser } from "@/app/(dashboard)/layout";
 import Topbar from "@/components/layout/Topbar";
 import MultiStepForm from "@/components/reports/MultiStepForm";
+import { useTranslation } from "@/lib/i18n";
 
 export default function BuatLaporanPage() {
+  const { t } = useTranslation();
   const user = useUser();
   const router = useRouter();
 
@@ -20,7 +22,7 @@ export default function BuatLaporanPage() {
 
   return (
     <div>
-      <Topbar title="Buat Laporan Baru" />
+      <Topbar title={t("reports.createNew")} />
       <MultiStepForm />
     </div>
   );

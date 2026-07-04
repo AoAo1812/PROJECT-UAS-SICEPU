@@ -5,8 +5,26 @@ import { I18nProvider } from "@/lib/i18n";
 import { Toaster } from "sonner";
 
 export const metadata: Metadata = {
-  title: "SICEPU - Sistem Informasi Cepat Pelaporan Kerusakan Fasilitas Kampus",
-  description: "Laporkan kerusakan fasilitas kampus secara cepat dan real-time dengan SICEPU",
+  title: "SICEPU - Sistem Informasi Pelaporan Kerusakan Fasilitas Kampus",
+  description: "Platform pelaporan kerusakan fasilitas kampus yang cepat, transparan, dan real-time",
+  viewport: "width=device-width, initial-scale=1, maximum-scale=1",
+  themeColor: "#D4A853",
+  icons: {
+    icon: "/favicon.svg",
+    apple: "/favicon.svg",
+  },
+  openGraph: {
+    title: "SICEPU - Sistem Informasi Pelaporan Kerusakan Fasilitas Kampus",
+    description: "Platform pelaporan kerusakan fasilitas kampus yang cepat, transparan, dan real-time",
+    type: "website",
+    locale: "id_ID",
+    siteName: "SICEPU",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "SICEPU - Sistem Informasi Pelaporan Kerusakan Fasilitas Kampus",
+    description: "Platform pelaporan kerusakan fasilitas kampus yang cepat, transparan, dan real-time",
+  },
 };
 
 export default function RootLayout({

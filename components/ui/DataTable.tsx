@@ -10,6 +10,13 @@ interface Column<T = Record<string, unknown>> {
   render?: (item: T) => React.ReactNode;
 }
 
+interface PaginationLabels {
+  previous?: string;
+  next?: string;
+  page?: string;
+  of?: string;
+}
+
 interface DataTableProps<T = Record<string, unknown>> {
   columns: Column<T>[];
   data: T[];
@@ -21,6 +28,7 @@ interface DataTableProps<T = Record<string, unknown>> {
   total?: number;
   totalPages?: number;
   onPageChange?: (page: number) => void;
+  paginationLabels?: PaginationLabels;
 }
 
 export default function DataTable<T = Record<string, unknown>>({
@@ -33,6 +41,7 @@ export default function DataTable<T = Record<string, unknown>>({
   total,
   totalPages: controlledTotalPages,
   onPageChange,
+  paginationLabels,
 }: DataTableProps<T>) {
   const [internalPage, setInternalPage] = useState(1);
   const page = controlledPage ?? internalPage;
@@ -85,9 +94,9 @@ export default function DataTable<T = Record<string, unknown>>({
               data.map((item, i) => (
                 <motion.tr
                   key={i}
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: i * 0.02 }}
+                  initial={{ opacity: 0, y: 4 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.15 }}
                   className="border-b border-[var(--border-color)]/50 hover:bg-[var(--surface)]/50 transition-colors"
                 >
                   {columns.map((col) => (
@@ -105,9 +114,20 @@ export default function DataTable<T = Record<string, unknown>>({
       {totalPages > 1 && (
         <div className="flex items-center justify-between">
           <p className="text-xs text-[var(--foreground)]/40">
-            Halaman {page} dari {totalPages}
+            {paginationLabels?.page || "Halaman"} {page} {paginationLabels?.of || "dari"} {totalPages}
           </p>
-          <div className="flex gap-1">
+          <div className="flex items-center gap-1">
+            <button
+              onClick={() => handlePageChange(page - 1)}
+              disabled={page <= 1}
+              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                page <= 1
+                  ? "text-slate-300 dark:text-slate-600 cursor-not-allowed"
+                  : "bg-amber-500 text-white hover:bg-amber-600 shadow-sm shadow-amber-500/25"
+              }`}
+            >
+              {paginationLabels?.previous || "Sebelumnya"}
+            </button>
             {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
               let p: number;
               if (totalPages <= 5) {
@@ -125,14 +145,25 @@ export default function DataTable<T = Record<string, unknown>>({
                   onClick={() => handlePageChange(p)}
                   className={`w-8 h-8 rounded-lg text-xs font-medium transition-all ${
                     p === page
-                      ? "bg-primary text-white"
-                      : "text-[var(--foreground)]/40 hover:bg-[var(--surface)] hover:text-[var(--foreground)]"
+                      ? "bg-amber-500 text-white shadow-sm shadow-amber-500/25"
+                      : "text-[var(--foreground)]/40 hover:bg-amber-50 dark:hover:bg-amber-900/20 hover:text-amber-600 dark:hover:text-amber-400"
                   }`}
                 >
                   {p}
                 </button>
               );
             })}
+            <button
+              onClick={() => handlePageChange(page + 1)}
+              disabled={page >= totalPages}
+              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                page >= totalPages
+                  ? "text-slate-300 dark:text-slate-600 cursor-not-allowed"
+                  : "bg-amber-500 text-white hover:bg-amber-600 shadow-sm shadow-amber-500/25"
+              }`}
+            >
+              {paginationLabels?.next || "Selanjutnya"}
+            </button>
           </div>
         </div>
       )}

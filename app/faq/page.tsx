@@ -36,10 +36,6 @@ const faqCategories = [
         q: "Lupa password, bagaimana cara reset?",
         a: "Klik 'Lupa Password' pada halaman login, masukkan email terdaftar, dan ikuti link reset password yang dikirim ke email Anda.",
       },
-      {
-        q: "Apakah bisa login dengan Google?",
-        a: "Saat ini SICEPU mendukung login dengan email dan password. Fitur Google OAuth sedang dalam pengembangan.",
-      },
     ],
   },
   {

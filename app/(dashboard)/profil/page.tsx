@@ -6,8 +6,10 @@ import Topbar from "@/components/layout/Topbar";
 import Card from "@/components/ui/Card";
 import Input from "@/components/ui/Input";
 import Button from "@/components/ui/Button";
+import { useTranslation } from "@/lib/i18n";
 
 export default function ProfilPage() {
+  const { t } = useTranslation();
   const [user, setUser] = useState({ name: "", email: "", avatar: "" });
   const [passwordForm, setPasswordForm] = useState({ currentPassword: "", newPassword: "", confirmPassword: "" });
   const [loading, setLoading] = useState(false);
@@ -25,7 +27,7 @@ export default function ProfilPage() {
     if (!file) return;
 
     if (file.size > 5 * 1024 * 1024) {
-      return toast.error("Ukuran file maksimal 5MB");
+      return toast.error(t("profile.maxSizeToast"));
     }
 
     setUploading(true);
@@ -46,9 +48,9 @@ export default function ProfilPage() {
       if (!updateRes.ok) throw new Error(updateData.error);
 
       setUser({ ...user, avatar: avatarUrl });
-      toast.success("Avatar berhasil diperbarui");
+      toast.success(t("profile.avatarUpdated"));
     } catch (e: unknown) {
-      toast.error(e instanceof Error ? e.message : "Gagal upload avatar");
+      toast.error(e instanceof Error ? e.message : t("profile.avatarError"));
     } finally {
       setUploading(false);
     }
@@ -65,9 +67,9 @@ export default function ProfilPage() {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error);
-      toast.success("Profil berhasil diperbarui");
+      toast.success(t("profile.profileUpdated"));
     } catch (e: unknown) {
-      toast.error(e instanceof Error ? e.message : "Gagal memperbarui profil");
+      toast.error(e instanceof Error ? e.message : t("profile.profileError"));
     } finally {
       setLoading(false);
     }
@@ -76,7 +78,7 @@ export default function ProfilPage() {
   const changePassword = async (e: React.FormEvent) => {
     e.preventDefault();
     if (passwordForm.newPassword !== passwordForm.confirmPassword) {
-      return toast.error("Password baru tidak cocok");
+      return toast.error(t("profile.passwordMismatch"));
     }
     setLoading(true);
     try {
@@ -87,10 +89,10 @@ export default function ProfilPage() {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error);
-      toast.success("Password berhasil diubah");
+      toast.success(t("profile.passwordChanged"));
       setPasswordForm({ currentPassword: "", newPassword: "", confirmPassword: "" });
     } catch (e: unknown) {
-      toast.error(e instanceof Error ? e.message : "Gagal mengubah password");
+      toast.error(e instanceof Error ? e.message : t("profile.passwordError"));
     } finally {
       setLoading(false);
     }
@@ -105,11 +107,11 @@ export default function ProfilPage() {
 
   return (
     <div>
-      <Topbar title="Profil Saya" />
+      <Topbar title={t("profile.myProfile")} />
 
       {/* Avatar Section */}
       <Card className="p-6 mb-6">
-        <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-4">Foto Profil</h3>
+        <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-4">{t("profile.photoSection")}</h3>
         <div className="flex items-center gap-6">
           <div className="relative group">
             {user.avatar ? (
@@ -140,54 +142,54 @@ export default function ProfilPage() {
           <div>
             <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={handleAvatarUpload} />
             <Button variant="secondary" size="sm" onClick={() => fileRef.current?.click()} loading={uploading}>
-              {user.avatar ? "Ganti Avatar" : "Upload Avatar"}
+              {user.avatar ? t("profile.changeAvatar") : t("profile.uploadAvatar")}
             </Button>
-            <p className="text-xs text-slate-500 dark:text-slate-400 mt-2">JPG, PNG, WebP (maks. 5MB)</p>
+            <p className="text-xs text-slate-500 dark:text-slate-400 mt-2">{t("profile.maxSize")}</p>
           </div>
         </div>
       </Card>
 
       <div className="grid lg:grid-cols-2 gap-6">
         <Card className="p-6">
-          <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-6">Informasi Profil</h3>
+          <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-6">{t("profile.infoSection")}</h3>
           <form onSubmit={updateProfile} className="space-y-4">
             <Input
-              label="Nama Lengkap"
+              label={t("profile.fullName")}
               value={user.name}
               onChange={(e) => setUser({ ...user, name: e.target.value })}
             />
             <Input
-              label="Email"
+              label={t("profile.emailLabel")}
               type="email"
               value={user.email}
               onChange={(e) => setUser({ ...user, email: e.target.value })}
             />
-            <Button type="submit" loading={loading}>Simpan Perubahan</Button>
+            <Button type="submit" loading={loading}>{t("profile.saveChanges")}</Button>
           </form>
         </Card>
 
         <Card className="p-6">
-          <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-6">Ubah Password</h3>
+          <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-6">{t("profile.changePasswordSection")}</h3>
           <form onSubmit={changePassword} className="space-y-4">
             <Input
-              label="Password Lama"
+              label={t("profile.currentPassword")}
               type="password"
               value={passwordForm.currentPassword}
               onChange={(e) => setPasswordForm({ ...passwordForm, currentPassword: e.target.value })}
             />
             <Input
-              label="Password Baru"
+              label={t("profile.newPassword")}
               type="password"
               value={passwordForm.newPassword}
               onChange={(e) => setPasswordForm({ ...passwordForm, newPassword: e.target.value })}
             />
             <Input
-              label="Konfirmasi Password Baru"
+              label={t("profile.confirmNewPassword")}
               type="password"
               value={passwordForm.confirmPassword}
               onChange={(e) => setPasswordForm({ ...passwordForm, confirmPassword: e.target.value })}
             />
-            <Button type="submit" loading={loading} variant="secondary">Ubah Password</Button>
+            <Button type="submit" loading={loading} variant="secondary">{t("profile.changePassword")}</Button>
           </form>
         </Card>
       </div>

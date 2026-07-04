@@ -4,6 +4,7 @@ import { useEffect, useState, useRef, useContext } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { UserContext } from "@/app/(dashboard)/layout";
 import { useTheme } from "@/components/providers/ThemeProvider";
+import { useTranslation } from "@/lib/i18n";
 
 interface ChatMessage {
   id: string;
@@ -23,6 +24,7 @@ interface ChatPanelProps {
 export default function ChatPanel({ reportId, reportName }: ChatPanelProps) {
   const user = useContext(UserContext);
   const { dark } = useTheme();
+  const { t } = useTranslation();
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");
   const [sending, setSending] = useState(false);
@@ -34,6 +36,26 @@ export default function ChatPanel({ reportId, reportName }: ChatPanelProps) {
       .then((r) => r.json())
       .then((d) => setMessages(d.messages || []))
       .finally(() => setLoading(false));
+  }, [reportId]);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      fetch(`/api/chats?reportId=${reportId}`)
+        .then((r) => r.json())
+        .then((d) => {
+          if (d.messages) {
+            setMessages((prev) => {
+              if (d.messages.length > prev.length) {
+                return d.messages;
+              }
+              return prev;
+            });
+          }
+        })
+        .catch(() => {});
+    }, 5000);
+
+    return () => clearInterval(interval);
   }, [reportId]);
 
   useEffect(() => {
@@ -55,9 +77,11 @@ export default function ChatPanel({ reportId, reportName }: ChatPanelProps) {
       const data = await res.json();
       if (res.ok && data.messages) {
         setMessages((prev) => [...prev, ...data.messages]);
+      } else {
+        setInput(msg);
       }
     } catch {
-      // silent
+      setInput(msg);
     } finally {
       setSending(false);
     }
@@ -77,11 +101,11 @@ export default function ChatPanel({ reportId, reportName }: ChatPanelProps) {
   const getRoleBadge = (role: string) => {
     switch (role) {
       case "admin":
-        return { bg: "bg-blue-100 dark:bg-blue-900/30", text: "text-blue-700 dark:text-blue-400", label: "Admin" };
+        return { bg: "bg-blue-100 dark:bg-blue-900/30", text: "text-blue-700 dark:text-blue-400", label: t("chat.admin") };
       case "bot":
-        return { bg: "bg-emerald-100 dark:bg-emerald-900/30", text: "text-emerald-700 dark:text-emerald-400", label: "Bot" };
+        return { bg: "bg-emerald-100 dark:bg-emerald-900/30", text: "text-emerald-700 dark:text-emerald-400", label: t("chat.bot") };
       default:
-        return { bg: "bg-slate-100 dark:bg-slate-800", text: "text-slate-700 dark:text-slate-400", label: "Pelapor" };
+        return { bg: "bg-slate-100 dark:bg-slate-800", text: "text-slate-700 dark:text-slate-400", label: t("chat.reporter") };
     }
   };
 
@@ -95,7 +119,7 @@ export default function ChatPanel({ reportId, reportName }: ChatPanelProps) {
           </svg>
         </div>
         <div>
-          <p className="text-sm font-semibold text-slate-900 dark:text-white">Chat Laporan</p>
+          <p className="text-sm font-semibold text-slate-900 dark:text-white">{t("chat.title")}</p>
           <p className="text-xs text-slate-500 dark:text-slate-400">{reportName}</p>
         </div>
       </div>
@@ -104,7 +128,7 @@ export default function ChatPanel({ reportId, reportName }: ChatPanelProps) {
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
         {loading ? (
           <div className="flex items-center justify-center h-full">
-            <p className="text-sm text-slate-400">Memuat chat...</p>
+            <p className="text-sm text-slate-400">{t("chat.loadingChat")}</p>
           </div>
         ) : messages.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-full text-center">
@@ -113,8 +137,8 @@ export default function ChatPanel({ reportId, reportName }: ChatPanelProps) {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
               </svg>
             </div>
-            <p className="text-sm font-medium text-slate-500 dark:text-slate-400">Belum ada pesan</p>
-            <p className="text-xs text-slate-400 dark:text-slate-500">Kirim pesan untuk memulai percakapan</p>
+            <p className="text-sm font-medium text-slate-500 dark:text-slate-400">{t("chat.noMessages")}</p>
+            <p className="text-xs text-slate-400 dark:text-slate-500">{t("chat.startConversation")}</p>
           </div>
         ) : (
           <AnimatePresence>
@@ -171,7 +195,7 @@ export default function ChatPanel({ reportId, reportName }: ChatPanelProps) {
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && send()}
-            placeholder="Ketik pesan..."
+            placeholder={t("chat.placeholder")}
             disabled={sending}
             className="flex-1 px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm text-slate-900 dark:text-slate-100 placeholder:text-slate-400 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all disabled:opacity-50"
           />

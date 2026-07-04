@@ -11,6 +11,7 @@ import Badge from "@/components/ui/Badge";
 import Button from "@/components/ui/Button";
 import Skeleton from "@/components/ui/Skeleton";
 import ChatPanel from "@/components/chat/ChatPanel";
+import { useTranslation } from "@/lib/i18n";
 
 interface Report {
   id: string;
@@ -28,24 +29,25 @@ interface Report {
   updatedAt: string;
 }
 
-const statusFlow = [
-  { key: "Menunggu", label: "Menunggu", desc: "Laporan diterima, menunggu verifikasi admin", icon: "M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z", color: "amber" },
-  { key: "Diproses", label: "Diproses", desc: "Tim teknis sedang menangani laporan", icon: "M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15", color: "blue" },
-  { key: "Selesai", label: "Selesai", desc: "Kerusakan telah diperbaiki", icon: "M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z", color: "emerald" },
-];
-
-const priorityColors: Record<string, string> = {
-  Rendah: "bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-400",
-  Sedang: "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400",
-  Tinggi: "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400",
-  Darurat: "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400",
-};
-
 export default function LaporanDetailPage() {
+  const { t } = useTranslation();
   const params = useParams();
   const router = useRouter();
   const [report, setReport] = useState<Report | null>(null);
   const [loading, setLoading] = useState(true);
+
+  const statusFlow = [
+    { key: "Menunggu", label: "Menunggu", desc: t("reports.statusPendingDesc"), icon: "M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z", color: "amber" },
+    { key: "Diproses", label: "Diproses", desc: t("reports.statusProcessingDesc"), icon: "M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15", color: "blue" },
+    { key: "Selesai", label: "Selesai", desc: t("reports.statusCompletedDesc"), icon: "M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z", color: "emerald" },
+  ];
+
+  const priorityColors: Record<string, string> = {
+    Rendah: "bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-400",
+    Sedang: "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400",
+    Tinggi: "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400",
+    Darurat: "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400",
+  };
 
   useEffect(() => {
     fetch(`/api/reports/${params.id}`)
@@ -55,13 +57,13 @@ export default function LaporanDetailPage() {
   }, [params.id]);
 
   const handleDelete = async () => {
-    if (!confirm("Yakin ingin menghapus laporan ini?")) return;
+    if (!confirm(t("common.confirm") + "?")) return;
     const res = await fetch(`/api/reports/${params.id}`, { method: "DELETE" });
     if (res.ok) {
-      toast.success("Laporan berhasil dihapus");
+      toast.success(t("common.success"));
       router.push("/laporan");
     } else {
-      toast.error("Gagal menghapus laporan");
+      toast.error(t("common.error"));
     }
   };
 
@@ -90,10 +92,10 @@ export default function LaporanDetailPage() {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
         </div>
-        <p className="text-lg font-semibold text-slate-900 dark:text-white mb-2">Laporan Tidak Ditemukan</p>
-        <p className="text-sm text-slate-500 dark:text-slate-400 mb-6">Laporan yang Anda cari mungkin sudah dihapus.</p>
+        <p className="text-lg font-semibold text-slate-900 dark:text-white mb-2">{t("reports.notFound")}</p>
+        <p className="text-sm text-slate-500 dark:text-slate-400 mb-6">{t("reports.notFoundDesc")}</p>
         <Link href="/laporan">
-          <Button>Kembali ke Daftar Laporan</Button>
+          <Button>{t("reports.backToListButton")}</Button>
         </Link>
       </div>
     );
@@ -104,7 +106,7 @@ export default function LaporanDetailPage() {
   return (
     <div>
       <Topbar
-        title="Detail Laporan"
+        title={t("reports.detail")}
         actions={
           <div className="flex gap-2">
             <Link href="/laporan">
@@ -112,7 +114,7 @@ export default function LaporanDetailPage() {
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                 </svg>
-                Kembali
+                {t("common.back")}
               </Button>
             </Link>
             {report.status === "Menunggu" && (
@@ -121,7 +123,7 @@ export default function LaporanDetailPage() {
                   <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                   </svg>
-                  Edit
+                  {t("common.edit")}
                 </Button>
               </Link>
             )}
@@ -129,7 +131,7 @@ export default function LaporanDetailPage() {
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
               </svg>
-              Hapus
+              {t("common.delete")}
             </Button>
           </div>
         }
@@ -164,23 +166,23 @@ export default function LaporanDetailPage() {
 
             <div className="space-y-4">
               <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/50">
-                <p className="text-sm font-medium text-slate-500 dark:text-slate-400 mb-2">Deskripsi Kerusakan</p>
+                <p className="text-sm font-medium text-slate-500 dark:text-slate-400 mb-2">{t("reports.damageDescription")}</p>
                 <p className="text-sm text-slate-700 dark:text-slate-300 leading-relaxed">{report.description}</p>
               </div>
 
               <div className="grid grid-cols-3 gap-4">
                 <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50">
-                  <p className="text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">Kategori</p>
+                  <p className="text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">{t("reports.category")}</p>
                   <p className="text-sm font-semibold text-slate-900 dark:text-white">{report.category}</p>
                 </div>
                 <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50">
-                  <p className="text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">Tanggal Kejadian</p>
+                  <p className="text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">{t("reports.incidentDate")}</p>
                   <p className="text-sm font-semibold text-slate-900 dark:text-white">
                     {new Date(report.date).toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" })}
                   </p>
                 </div>
                 <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50">
-                  <p className="text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">Dibuat Pada</p>
+                  <p className="text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">{t("reports.createdAt")}</p>
                   <p className="text-sm font-semibold text-slate-900 dark:text-white">
                     {new Date(report.createdAt).toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" })}
                   </p>
@@ -191,7 +193,7 @@ export default function LaporanDetailPage() {
 
           {/* Timeline Status */}
           <Card className="p-6">
-            <h3 className="text-sm font-semibold text-slate-500 dark:text-slate-400 mb-6 uppercase tracking-wider">Timeline Status</h3>
+            <h3 className="text-sm font-semibold text-slate-500 dark:text-slate-400 mb-6 uppercase tracking-wider">{t("reports.timeline")}</h3>
 
             {report.status === "Ditolak" ? (
               <div className="space-y-3">
@@ -202,8 +204,8 @@ export default function LaporanDetailPage() {
                     </svg>
                   </div>
                   <div>
-                    <p className="text-sm font-semibold text-red-700 dark:text-red-400">Laporan Ditolak</p>
-                    <p className="text-xs text-red-600 dark:text-red-400/70">{report.adminNote || "Tidak ada catatan dari admin"}</p>
+                    <p className="text-sm font-semibold text-red-700 dark:text-red-400">{t("reports.rejectedMessage")}</p>
+                    <p className="text-xs text-red-600 dark:text-red-400/70">{report.adminNote || t("reports.noAdminNote")}</p>
                   </div>
                 </div>
               </div>
@@ -254,10 +256,10 @@ export default function LaporanDetailPage() {
                         </p>
                         <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{s.desc}</p>
                         {isCompleted && (
-                          <p className="text-xs text-emerald-600 dark:text-emerald-400 mt-1 font-medium">Selesai</p>
+                          <p className="text-xs text-emerald-600 dark:text-emerald-400 mt-1 font-medium">{t("dashboard.completed")}</p>
                         )}
                         {isCurrent && (
-                          <p className="text-xs text-blue-600 dark:text-blue-400 mt-1 font-medium">Status saat ini</p>
+                          <p className="text-xs text-blue-600 dark:text-blue-400 mt-1 font-medium">{t("reports.currentStatus")}</p>
                         )}
                       </div>
                     </div>
@@ -270,7 +272,7 @@ export default function LaporanDetailPage() {
           {/* Photos */}
           {report.photos && report.photos.length > 0 && (
             <Card className="p-6">
-              <h3 className="text-sm font-semibold text-slate-500 dark:text-slate-400 mb-4 uppercase tracking-wider">Foto Bukti ({report.photos.length})</h3>
+              <h3 className="text-sm font-semibold text-slate-500 dark:text-slate-400 mb-4 uppercase tracking-wider">{t("reports.photos")} ({report.photos.length})</h3>
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                 {report.photos.map((photo, i) => (
                   <div key={i} className="relative group aspect-square rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700">
@@ -300,28 +302,28 @@ export default function LaporanDetailPage() {
         <div className="space-y-6">
           {/* Status Card */}
           <Card className="p-6">
-            <h3 className="text-sm font-semibold text-slate-500 dark:text-slate-400 mb-4 uppercase tracking-wider">Status Laporan</h3>
+            <h3 className="text-sm font-semibold text-slate-500 dark:text-slate-400 mb-4 uppercase tracking-wider">{t("reports.statusInfoTitle")}</h3>
             <div className="flex items-center gap-3 mb-4">
               <Badge status={report.status} />
             </div>
             {report.status === "Menunggu" && (
               <div className="p-3 rounded-xl bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800/30">
                 <p className="text-xs text-amber-700 dark:text-amber-400">
-                  Laporan Anda sedang menunggu verifikasi dari admin. Admin akan segera memproses laporan Anda.
+                  {t("reports.statusPendingInfo")}
                 </p>
               </div>
             )}
             {report.status === "Diproses" && (
               <div className="p-3 rounded-xl bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800/30">
                 <p className="text-xs text-blue-700 dark:text-blue-400">
-                  Laporan Anda sedang ditangani oleh tim teknis. Perbaikan sedang dalam proses.
+                  {t("reports.statusProcessingInfo")}
                 </p>
               </div>
             )}
             {report.status === "Selesai" && (
               <div className="p-3 rounded-xl bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800/30">
                 <p className="text-xs text-emerald-700 dark:text-emerald-400">
-                  Kerusakan telah berhasil diperbaiki oleh tim teknis. Terima kasih telah melaporkan!
+                  {t("reports.statusCompletedInfo")}
                 </p>
               </div>
             )}
@@ -330,7 +332,7 @@ export default function LaporanDetailPage() {
           {/* Admin Notes */}
           {report.adminNote && (
             <Card className="p-6">
-              <h3 className="text-sm font-semibold text-slate-500 dark:text-slate-400 mb-3 uppercase tracking-wider">Catatan Admin</h3>
+              <h3 className="text-sm font-semibold text-slate-500 dark:text-slate-400 mb-3 uppercase tracking-wider">{t("reports.adminNote")}</h3>
               <div className="p-4 rounded-xl bg-blue-50 dark:bg-blue-900/20 border border-blue-200/50 dark:border-blue-800/30">
                 <div className="flex items-start gap-2">
                   <div className="w-6 h-6 rounded-full bg-blue-500 flex items-center justify-center shrink-0 mt-0.5">
@@ -346,24 +348,24 @@ export default function LaporanDetailPage() {
 
           {/* Info Card */}
           <Card className="p-6">
-            <h3 className="text-sm font-semibold text-slate-500 dark:text-slate-400 mb-4 uppercase tracking-wider">Informasi</h3>
+            <h3 className="text-sm font-semibold text-slate-500 dark:text-slate-400 mb-4 uppercase tracking-wider">{t("common.info")}</h3>
             <div className="space-y-3">
               <div className="flex items-center justify-between py-2 border-b border-slate-100 dark:border-slate-800 last:border-0">
-                <span className="text-sm text-slate-500 dark:text-slate-400">ID Laporan</span>
+                <span className="text-sm text-slate-500 dark:text-slate-400">{t("reports.reportId")}</span>
                 <span className="text-xs font-mono text-slate-700 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded">{report.id.slice(0, 8)}...</span>
               </div>
               <div className="flex items-center justify-between py-2 border-b border-slate-100 dark:border-slate-800 last:border-0">
-                <span className="text-sm text-slate-500 dark:text-slate-400">Pelapor</span>
+                <span className="text-sm text-slate-500 dark:text-slate-400">{t("reports.reporter")}</span>
                 <span className="text-sm font-medium text-slate-900 dark:text-white">{report.userName}</span>
               </div>
               <div className="flex items-center justify-between py-2 border-b border-slate-100 dark:border-slate-800 last:border-0">
-                <span className="text-sm text-slate-500 dark:text-slate-400">Dibuat</span>
+                <span className="text-sm text-slate-500 dark:text-slate-400">{t("reports.createdAt")}</span>
                 <span className="text-sm text-slate-700 dark:text-slate-300">
                   {new Date(report.createdAt).toLocaleDateString("id-ID")}
                 </span>
               </div>
               <div className="flex items-center justify-between py-2">
-                <span className="text-sm text-slate-500 dark:text-slate-400">Terakhir Update</span>
+                <span className="text-sm text-slate-500 dark:text-slate-400">{t("reports.lastUpdate")}</span>
                 <span className="text-sm text-slate-700 dark:text-slate-300">
                   {new Date(report.updatedAt).toLocaleDateString("id-ID")}
                 </span>
@@ -373,8 +375,25 @@ export default function LaporanDetailPage() {
 
           {/* Quick Actions */}
           <Card className="p-6">
-            <h3 className="text-sm font-semibold text-slate-500 dark:text-slate-400 mb-4 uppercase tracking-wider">Aksi Cepat</h3>
+            <h3 className="text-sm font-semibold text-slate-500 dark:text-slate-400 mb-4 uppercase tracking-wider">{t("reports.quickActions")}</h3>
             <div className="space-y-2">
+              <button
+                onClick={() => {
+                  const printWindow = window.open(`/laporan/${report.id}/print`, "_blank");
+                  if (printWindow) printWindow.onload = () => printWindow.print();
+                }}
+                className="flex items-center gap-3 p-3 rounded-xl hover:bg-amber-50 dark:hover:bg-amber-900/10 transition-colors w-full text-left"
+              >
+                <div className="w-9 h-9 rounded-lg bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center shrink-0">
+                  <svg className="w-4 h-4 text-amber-600 dark:text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+                  </svg>
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-slate-900 dark:text-white">{t("reports.print")}</p>
+                  <p className="text-xs text-slate-500 dark:text-slate-400">{t("reports.downloadPdf")}</p>
+                </div>
+              </button>
               <Link href="/laporan/baru" className="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
                 <div className="w-9 h-9 rounded-lg bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center shrink-0">
                   <svg className="w-4 h-4 text-blue-600 dark:text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -382,8 +401,8 @@ export default function LaporanDetailPage() {
                   </svg>
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-slate-900 dark:text-white">Buat Laporan Baru</p>
-                  <p className="text-xs text-slate-500 dark:text-slate-400">Laporkan kerusakan lain</p>
+                  <p className="text-sm font-medium text-slate-900 dark:text-white">{t("reports.createNewReport")}</p>
+                  <p className="text-xs text-slate-500 dark:text-slate-400">{t("reports.reportAnother")}</p>
                 </div>
               </Link>
               <Link href="/laporan" className="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
@@ -393,8 +412,8 @@ export default function LaporanDetailPage() {
                   </svg>
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-slate-900 dark:text-white">Lihat Semua Laporan</p>
-                  <p className="text-xs text-slate-500 dark:text-slate-400">Kembali ke daftar</p>
+                  <p className="text-sm font-medium text-slate-900 dark:text-white">{t("reports.viewAllReports")}</p>
+                  <p className="text-xs text-slate-500 dark:text-slate-400">{t("reports.backToList")}</p>
                 </div>
               </Link>
             </div>

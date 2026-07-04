@@ -61,6 +61,15 @@ export function updateUser(id: string, data: Partial<User>): User | null {
   return users[idx];
 }
 
+export function updateUserPassword(email: string, hashedPassword: string): boolean {
+  const users = getUsers();
+  const idx = users.findIndex((u) => u.email === email);
+  if (idx === -1) return false;
+  users[idx] = { ...users[idx], password: hashedPassword };
+  writeJson(USERS_FILE, users);
+  return true;
+}
+
 export function deleteUser(id: string): boolean {
   const users = getUsers();
   const filtered = users.filter((u) => u.id !== id);
@@ -135,6 +144,42 @@ export function getMonthlyReportData(): { month: string; count: number }[] {
       return rd.getMonth() === d.getMonth() && rd.getFullYear() === d.getFullYear();
     }).length;
     result.push({ month: months[d.getMonth()], count });
+  }
+  return result;
+}
+
+export function getWeeklyReportData(): { month: string; count: number }[] {
+  const reports = getReports();
+  const now = new Date();
+  const result: { month: string; count: number }[] = [];
+  for (let i = 3; i >= 0; i--) {
+    const weekStart = new Date(now);
+    weekStart.setDate(now.getDate() - (i * 7 + now.getDay()));
+    weekStart.setHours(0, 0, 0, 0);
+    const weekEnd = new Date(weekStart);
+    weekEnd.setDate(weekStart.getDate() + 6);
+    weekEnd.setHours(23, 59, 59, 999);
+    const count = reports.filter((r) => {
+      const rd = new Date(r.createdAt);
+      return rd >= weekStart && rd <= weekEnd;
+    }).length;
+    const label = `${weekStart.getDate()}/${weekStart.getMonth() + 1}`;
+    result.push({ month: label, count });
+  }
+  return result;
+}
+
+export function getYearlyReportData(): { month: string; count: number }[] {
+  const reports = getReports();
+  const now = new Date();
+  const result: { month: string; count: number }[] = [];
+  for (let i = 4; i >= 0; i--) {
+    const year = now.getFullYear() - i;
+    const count = reports.filter((r) => {
+      const rd = new Date(r.createdAt);
+      return rd.getFullYear() === year;
+    }).length;
+    result.push({ month: String(year), count });
   }
   return result;
 }
