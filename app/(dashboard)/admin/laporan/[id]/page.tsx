@@ -333,7 +333,7 @@ export default function AdminLaporanDetailPage() {
             <div className="space-y-3">
               <button
                 onClick={() => {
-                  const printWindow = window.open(`/laporan/${report.id}/print`, "_blank");
+                  const printWindow = window.open(`/cetak/${report.id}`, "_blank");
                   if (printWindow) printWindow.onload = () => printWindow.print();
                 }}
                 className="flex items-center gap-3 p-3 rounded-xl hover:bg-amber-50 dark:hover:bg-amber-900/10 transition-colors w-full text-left"

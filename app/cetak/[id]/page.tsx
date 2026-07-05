@@ -15,7 +15,6 @@ interface Report {
   status: "Menunggu" | "Diproses" | "Selesai" | "Ditolak";
   adminNote: string;
   userName: string;
-  userEmail?: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -56,7 +55,7 @@ const priorityLabels: Record<string, string> = {
   Darurat: "Darurat",
 };
 
-export default function PrintReportPage() {
+export default function CetakLaporanPage() {
   const params = useParams();
   const [report, setReport] = useState<Report | null>(null);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
@@ -73,7 +72,7 @@ export default function PrintReportPage() {
         if (d.report) setReport(d.report);
         else throw new Error("Data laporan kosong");
       })
-      .catch((e) => setErrorMsg(e.message));
+      .catch((e: Error) => setErrorMsg(e.message));
   }, [params.id]);
 
   useEffect(() => {
@@ -83,23 +82,11 @@ export default function PrintReportPage() {
     }
   }, [report]);
 
-  const formatDate = (dateStr: string) => {
-    return new Date(dateStr).toLocaleDateString("id-ID", {
-      day: "numeric",
-      month: "long",
-      year: "numeric",
-    });
-  };
+  const formatDate = (dateStr: string) =>
+    new Date(dateStr).toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" });
 
-  const formatDateTime = (dateStr: string) => {
-    return new Date(dateStr).toLocaleDateString("id-ID", {
-      day: "numeric",
-      month: "long",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-  };
+  const formatDateTime = (dateStr: string) =>
+    new Date(dateStr).toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric", hour: "2-digit", minute: "2-digit" });
 
   const getReportNumber = () => {
     const date = new Date(report?.createdAt || Date.now());
@@ -114,10 +101,7 @@ export default function PrintReportPage() {
       <div style={{ padding: 60, textAlign: "center", fontFamily: "sans-serif", color: "#666" }}>
         <p style={{ fontSize: 16, fontWeight: "bold", color: "#dc2626" }}>Gagal memuat laporan</p>
         <p style={{ fontSize: 13, color: "#888" }}>{errorMsg}</p>
-        <button
-          onClick={() => window.close()}
-          style={{ marginTop: 16, padding: "8px 20px", background: "#1a1a1a", color: "white", border: "none", borderRadius: 6, cursor: "pointer", fontSize: 13 }}
-        >
+        <button onClick={() => window.close()} style={{ marginTop: 16, padding: "8px 20px", background: "#1a1a1a", color: "white", border: "none", borderRadius: 6, cursor: "pointer", fontSize: 13 }}>
           Tutup
         </button>
       </div>
@@ -138,34 +122,16 @@ export default function PrintReportPage() {
     <>
       <style>{`
         @media print {
-          @page {
-            size: A4;
-            margin: 20mm 15mm 25mm 15mm;
-          }
-          body {
-            margin: 0;
-            padding: 0;
-            -webkit-print-color-adjust: exact;
-            print-color-adjust: exact;
-          }
-          .avoid-break {
-            page-break-inside: avoid;
-          }
+          @page { size: A4; margin: 20mm 15mm 25mm 15mm; }
+          body { margin: 0; padding: 0; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+          .avoid-break { page-break-inside: avoid; }
         }
         * { box-sizing: border-box; }
         body { margin: 0; padding: 0; background: white; }
       `}</style>
 
-      <div style={{
-        fontFamily: "'Times New Roman', Times, Georgia, serif",
-        color: "#1a1a1a",
-        lineHeight: 1.8,
-        fontSize: 12,
-        maxWidth: 750,
-        margin: "0 auto",
-        padding: "30px 40px",
-        background: "white",
-      }}>
+      <div style={{ fontFamily: "'Times New Roman', Times, Georgia, serif", color: "#1a1a1a", lineHeight: 1.8, fontSize: 12, maxWidth: 750, margin: "0 auto", padding: "30px 40px", background: "white" }}>
+
         {/* HEADER */}
         <div style={{ textAlign: "center", marginBottom: 28, borderBottom: "3px double #1a1a1a", paddingBottom: 16 }}>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 16, marginBottom: 8 }}>
@@ -178,29 +144,19 @@ export default function PrintReportPage() {
               <rect x="20.5" y="28.5" width="6" height="1.5" rx="0.75" fill="#D4A853"/>
             </svg>
             <div>
-              <h1 style={{ fontSize: 22, fontWeight: "bold", margin: 0, letterSpacing: 3, textTransform: "uppercase" }}>
-                SICEPU
-              </h1>
-              <p style={{ fontSize: 11, margin: 0, color: "#555", letterSpacing: 1 }}>
-                Sistem Informasi Cepat Pelaporan Kerusakan Fasilitas Kampus
-              </p>
+              <h1 style={{ fontSize: 22, fontWeight: "bold", margin: 0, letterSpacing: 3, textTransform: "uppercase" }}>SICEPU</h1>
+              <p style={{ fontSize: 11, margin: 0, color: "#555", letterSpacing: 1 }}>Sistem Informasi Cepat Pelaporan Kerusakan Fasilitas Kampus</p>
             </div>
           </div>
           <div style={{ borderTop: "1px solid #1a1a1a", marginTop: 12, paddingTop: 8 }}>
-            <p style={{ fontSize: 10, margin: 0, color: "#666" }}>
-              Universitas Indonesia &middot; Jl. Salemba Raya No. 4, Jakarta Pusat 10430
-            </p>
+            <p style={{ fontSize: 10, margin: 0, color: "#666" }}>Universitas Indonesia &middot; Jl. Salemba Raya No. 4, Jakarta Pusat 10430</p>
           </div>
         </div>
 
         {/* JUDUL */}
         <div style={{ textAlign: "center", marginBottom: 28 }}>
-          <h2 style={{ fontSize: 18, fontWeight: "bold", margin: "0 0 4px 0", textTransform: "uppercase", letterSpacing: 3 }}>
-            LAPORAN KERUSAKAN
-          </h2>
-          <p style={{ fontSize: 12, margin: 0, color: "#555" }}>
-            Nomor: {getReportNumber()}
-          </p>
+          <h2 style={{ fontSize: 18, fontWeight: "bold", margin: "0 0 4px 0", textTransform: "uppercase", letterSpacing: 3 }}>LAPORAN KERUSAKAN</h2>
+          <p style={{ fontSize: 12, margin: 0, color: "#555" }}>Nomor: {getReportNumber()}</p>
         </div>
 
         {/* TABEL INFO */}
@@ -249,9 +205,7 @@ export default function PrintReportPage() {
 
         {/* URAIAN KERUSAKAN */}
         <div className="avoid-break" style={{ marginBottom: 28 }}>
-          <h3 style={{ fontSize: 13, fontWeight: "bold", margin: "0 0 10px 0", textTransform: "uppercase", borderBottom: "2px solid #1a1a1a", paddingBottom: 4 }}>
-            A. URAIAN KERUSAKAN
-          </h3>
+          <h3 style={{ fontSize: 13, fontWeight: "bold", margin: "0 0 10px 0", textTransform: "uppercase", borderBottom: "2px solid #1a1a1a", paddingBottom: 4 }}>A. URAIAN KERUSAKAN</h3>
           <div style={{ padding: 14, border: "1px solid #ddd", borderRadius: 4, background: "#fafafa", fontSize: 12, lineHeight: 2, textAlign: "justify" }}>
             {report.description}
           </div>
@@ -259,9 +213,7 @@ export default function PrintReportPage() {
 
         {/* STATUS PENANGANAN */}
         <div className="avoid-break" style={{ marginBottom: 28 }}>
-          <h3 style={{ fontSize: 13, fontWeight: "bold", margin: "0 0 12px 0", textTransform: "uppercase", borderBottom: "2px solid #1a1a1a", paddingBottom: 4 }}>
-            B. STATUS PENANGANAN
-          </h3>
+          <h3 style={{ fontSize: 13, fontWeight: "bold", margin: "0 0 12px 0", textTransform: "uppercase", borderBottom: "2px solid #1a1a1a", paddingBottom: 4 }}>B. STATUS PENANGANAN</h3>
           <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 11 }}>
             <thead>
               <tr>
@@ -296,9 +248,7 @@ export default function PrintReportPage() {
         {/* CATATAN ADMIN */}
         {report.adminNote && (
           <div className="avoid-break" style={{ marginBottom: 28 }}>
-            <h3 style={{ fontSize: 13, fontWeight: "bold", margin: "0 0 10px 0", textTransform: "uppercase", borderBottom: "2px solid #1a1a1a", paddingBottom: 4 }}>
-              C. CATATAN PENANGANAN
-            </h3>
+            <h3 style={{ fontSize: 13, fontWeight: "bold", margin: "0 0 10px 0", textTransform: "uppercase", borderBottom: "2px solid #1a1a1a", paddingBottom: 4 }}>C. CATATAN PENANGANAN</h3>
             <div style={{ padding: 14, border: "1px solid #D4A853", borderRadius: 4, background: "#FFFBEB", fontSize: 12, lineHeight: 2 }}>
               <div style={{ display: "flex", alignItems: "flex-start", gap: 10 }}>
                 <div style={{ width: 24, height: 24, borderRadius: "50%", background: "#D4A853", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, marginTop: 2 }}>
@@ -316,16 +266,12 @@ export default function PrintReportPage() {
         {/* FOTO BUKTI */}
         {report.photos && report.photos.length > 0 && (
           <div className="avoid-break" style={{ marginBottom: 28 }}>
-            <h3 style={{ fontSize: 13, fontWeight: "bold", margin: "0 0 12px 0", textTransform: "uppercase", borderBottom: "2px solid #1a1a1a", paddingBottom: 4 }}>
-              D. FOTO BUKTI KERUSAKAN
-            </h3>
+            <h3 style={{ fontSize: 13, fontWeight: "bold", margin: "0 0 12px 0", textTransform: "uppercase", borderBottom: "2px solid #1a1a1a", paddingBottom: 4 }}>D. FOTO BUKTI KERUSAKAN</h3>
             <div style={{ display: "grid", gridTemplateColumns: report.photos.length === 1 ? "1fr" : "repeat(2, 1fr)", gap: 12 }}>
               {report.photos.map((photo, i) => (
                 <div key={i} style={{ border: "1px solid #ddd", borderRadius: 4, overflow: "hidden" }}>
                   <img src={photo} alt={`Bukti ${i + 1}`} style={{ width: "100%", height: 160, objectFit: "cover", display: "block" }} />
-                  <div style={{ padding: "6px 10px", background: "#f5f5f5", fontSize: 10, textAlign: "center", borderTop: "1px solid #ddd" }}>
-                    Gambar {i + 1} - Bukti Kerusakan
-                  </div>
+                  <div style={{ padding: "6px 10px", background: "#f5f5f5", fontSize: 10, textAlign: "center", borderTop: "1px solid #ddd" }}>Gambar {i + 1} - Bukti Kerusakan</div>
                 </div>
               ))}
             </div>
@@ -334,9 +280,7 @@ export default function PrintReportPage() {
 
         {/* RINGKASAN */}
         <div className="avoid-break" style={{ marginBottom: 28 }}>
-          <h3 style={{ fontSize: 13, fontWeight: "bold", margin: "0 0 10px 0", textTransform: "uppercase", borderBottom: "2px solid #1a1a1a", paddingBottom: 4 }}>
-            E. RINGKASAN
-          </h3>
+          <h3 style={{ fontSize: 13, fontWeight: "bold", margin: "0 0 10px 0", textTransform: "uppercase", borderBottom: "2px solid #1a1a1a", paddingBottom: 4 }}>E. RINGKASAN</h3>
           <div style={{ padding: 14, border: "1px solid #ddd", borderRadius: 4, background: "#fafafa", fontSize: 12, lineHeight: 2.2 }}>
             <table style={{ width: "100%", borderCollapse: "collapse" }}>
               <tbody>
@@ -350,9 +294,7 @@ export default function PrintReportPage() {
                 </tr>
                 <tr>
                   <td style={{ padding: "3px 0", color: "#555" }}>Lama Penanganan</td>
-                  <td style={{ padding: "3px 0", fontWeight: "bold" }}>
-                    : {Math.max(1, Math.ceil((new Date(report.updatedAt).getTime() - new Date(report.createdAt).getTime()) / (1000 * 60 * 60 * 24)))} hari
-                  </td>
+                  <td style={{ padding: "3px 0", fontWeight: "bold" }}>: {Math.max(1, Math.ceil((new Date(report.updatedAt).getTime() - new Date(report.createdAt).getTime()) / (1000 * 60 * 60 * 24)))} hari</td>
                 </tr>
               </tbody>
             </table>

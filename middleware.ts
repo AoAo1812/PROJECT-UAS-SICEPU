@@ -8,8 +8,8 @@ export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const token = request.cookies.get("token")?.value;
 
-  // Allow print pages without auth
-  if (pathname.includes("/print")) {
+  // Allow print/cetak pages without auth
+  if (pathname.includes("/print") || pathname.includes("/cetak")) {
     return NextResponse.next();
   }
 
