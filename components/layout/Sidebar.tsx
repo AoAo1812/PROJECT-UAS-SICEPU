@@ -48,7 +48,7 @@ export default function Sidebar({ collapsed, onToggle, onClose }: { collapsed: b
       {/* Logo */}
       <div className="flex items-center justify-between h-14 px-3 border-b border-[var(--border-color)]">
         {!collapsed && (
-          <Link href={user?.role === "admin" ? "/admin" : "/dashboard"} className="flex items-center gap-2" onClick={onClose}>
+          <Link href="/" className="flex items-center gap-2" onClick={onClose}>
             <Logo size="sm" showText={false} />
             <span className="text-sm font-bold">
               <span className="text-[var(--foreground)]">SI</span>
@@ -85,6 +85,17 @@ export default function Sidebar({ collapsed, onToggle, onClose }: { collapsed: b
 
       {/* Navigation */}
       <nav className="flex-1 p-2 space-y-0.5 overflow-y-auto">
+        {/* Home Link */}
+        <Link
+          href="/"
+          onClick={onClose}
+          className="flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-sm text-[var(--foreground)]/60 hover:text-[var(--foreground)] hover:bg-[var(--surface)] transition-all"
+        >
+          <svg className="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+          </svg>
+          {!collapsed && <span>{t("nav.home")}</span>}
+        </Link>
         {nav.map((item) => {
           const active = pathname === item.href || (item.href !== "/dashboard" && item.href !== "/admin" && pathname.startsWith(item.href));
           return (

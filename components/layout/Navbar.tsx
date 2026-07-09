@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useTheme } from "@/components/providers/ThemeProvider";
 import { useTranslation, getAvailableLocales, getLocaleLabel } from "@/lib/i18n";
 import Logo from "@/components/ui/Logo";
+import Avatar from "@/components/ui/Avatar";
 
 export default function Navbar() {
   const { dark, toggle } = useTheme();
@@ -13,7 +14,7 @@ export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [langOpen, setLangOpen] = useState(false);
-  const [user, setUser] = useState<{ name: string; role: string } | null>(null);
+  const [user, setUser] = useState<{ name: string; role: string; avatar?: string } | null>(null);
 
   useEffect(() => {
     const handler = () => setScrolled(window.scrollY > 20);
@@ -124,8 +125,8 @@ export default function Navbar() {
                 >
                   {t("nav.dashboard")}
                 </Link>
-                <Link href="/profil" className="w-7 h-7 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center text-white text-xs font-bold hover:ring-2 hover:ring-primary/50 transition-all">
-                  {user.name.split(" ").map((w: string) => w[0]).join("").slice(0, 2)}
+                <Link href="/profil" className="hover:ring-2 hover:ring-primary/50 transition-all rounded-full">
+                  <Avatar name={user.name} size="sm" src={user.avatar} />
                 </Link>
               </div>
             ) : (

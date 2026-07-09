@@ -43,6 +43,7 @@ export default function AdminDashboardPage() {
   const [recent, setRecent] = useState<Report[]>([]);
   const [chatInfo, setChatInfo] = useState<ChatInfo>({ totalMessages: 0, unreadFromUsers: 0 });
   const [loading, setLoading] = useState(true);
+  const [period, setPeriod] = useState<"weekly" | "monthly" | "yearly">("monthly");
 
   const priorityKey: Record<string, string> = {
     Rendah: "reports.priorities.low",
@@ -53,7 +54,7 @@ export default function AdminDashboardPage() {
 
   useEffect(() => {
     Promise.all([
-      fetch("/api/reports/stats").then((r) => r.json()),
+      fetch(`/api/reports/stats?period=${period}`).then((r) => r.json()),
       fetch("/api/reports?limit=15").then((r) => r.json()),
       fetch("/api/chats").then((r) => r.json()),
     ]).then(([statsData, reportsData, chatData]) => {
@@ -66,7 +67,7 @@ export default function AdminDashboardPage() {
         unreadFromUsers: msgs.filter((m: { senderRole: string }) => m.senderRole === "user").length,
       });
     }).finally(() => setLoading(false));
-  }, []);
+  }, [period]);
 
   if (loading) {
     return (
@@ -189,7 +190,24 @@ export default function AdminDashboardPage() {
       {/* Charts */}
       <div className="grid lg:grid-cols-3 gap-6 mb-8">
         <Card className="p-6 lg:col-span-2">
-          <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-6">{t("dashboard.monthlyChart")}</h3>
+          <div className="flex items-center justify-between mb-6">
+            <h3 className="text-lg font-semibold text-slate-900 dark:text-white">{t("dashboard.monthlyChart")}</h3>
+            <div className="flex items-center gap-1 p-1 rounded-lg bg-slate-100 dark:bg-slate-800">
+              {(["weekly", "monthly", "yearly"] as const).map((p) => (
+                <button
+                  key={p}
+                  onClick={() => setPeriod(p)}
+                  className={`px-3 py-1 rounded-md text-xs font-medium transition-all ${
+                    period === p
+                      ? "bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-sm"
+                      : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300"
+                  }`}
+                >
+                  {t(`dashboard.period.${p}`)}
+                </button>
+              ))}
+            </div>
+          </div>
           {monthly.length > 0 ? <ReportsChart data={monthly} /> : <div className="h-64 flex items-center justify-center text-sm text-slate-400">{t("dashboard.noData")}</div>}
         </Card>
         <Card className="p-6">
