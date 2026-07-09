@@ -5,6 +5,7 @@ export interface User {
   password: string;
   role: "user" | "admin";
   avatar?: string;
+  backupEmail?: string;
   createdAt: string;
 }
 

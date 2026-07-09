@@ -4,6 +4,15 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import { useTranslation } from "@/lib/i18n";
 
+const featureRoutes = [
+  "/laporan/baru",
+  "/laporan/tracking",
+  "/laporan/baru#upload-foto",
+  "/dashboard",
+  "/profil/keamanan",
+  "/tentang-aplikasi",
+];
+
 export default function FeaturesSection() {
   const { t } = useTranslation();
 
@@ -59,15 +68,16 @@ export default function FeaturesSection() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.4, delay: i * 0.05 }}
+              whileHover={{ y: -4, transition: { duration: 0.2 } }}
             >
-              <Link href="/features" className="block group">
-                <div className="p-5 rounded-xl bg-[var(--surface)] border border-[var(--border-color)] hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5 transition-all duration-200">
-                  <div className={`w-9 h-9 rounded-lg bg-gradient-to-br ${featureColors[i]} flex items-center justify-center text-white mb-4 group-hover:scale-110 transition-transform duration-200`}>
+              <Link href={featureRoutes[i]} className="block group">
+                <div className="h-full p-5 rounded-xl bg-[var(--surface)] border border-[var(--border-color)] hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5 transition-all duration-300 cursor-pointer">
+                  <div className={`w-9 h-9 rounded-lg bg-gradient-to-br ${featureColors[i]} flex items-center justify-center text-white mb-4 group-hover:scale-110 transition-transform duration-300`}>
                     <svg className="w-4.5 h-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={featureIcons[i]} />
                     </svg>
                   </div>
-                  <h3 className="text-sm font-semibold text-[var(--foreground)] mb-1.5 group-hover:text-primary transition-colors">
+                  <h3 className="text-sm font-semibold text-[var(--foreground)] mb-1.5 group-hover:text-primary transition-colors duration-300">
                     {t(`features.items.${key}.title`)}
                   </h3>
                   <p className="text-xs text-[var(--foreground)]/60 leading-relaxed">

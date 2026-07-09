@@ -8,13 +8,14 @@ export async function PUT(request: NextRequest) {
     return Response.json({ error: "Tidak terautentikasi" }, { status: 401 });
   }
 
-  const { name, email, avatar } = await request.json();
+  const { name, email, avatar, backupEmail } = await request.json();
   if (!name || !email) {
     return Response.json({ error: "Field harus diisi" }, { status: 400 });
   }
 
   const updateData: Record<string, string> = { name, email };
   if (avatar) updateData.avatar = avatar;
+  if (backupEmail !== undefined) updateData.backupEmail = backupEmail;
 
   const updated = updateUser(payload.userId, updateData);
   if (!updated) {

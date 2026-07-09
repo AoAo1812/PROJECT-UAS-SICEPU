@@ -5,9 +5,9 @@ import { v4 as uuid } from "uuid";
 
 export async function POST(request: NextRequest) {
   try {
-    const { name, email, password } = await request.json();
+    const { name, email, password, backupEmail } = await request.json();
 
-    if (!name || !email || !password) {
+    if (!name || !email || !password || !backupEmail) {
       return Response.json({ error: "Semua field harus diisi" }, { status: 400 });
     }
 
@@ -15,9 +15,18 @@ export async function POST(request: NextRequest) {
       return Response.json({ error: "Password minimal 6 karakter" }, { status: 400 });
     }
 
+    if (email.toLowerCase() === backupEmail.toLowerCase()) {
+      return Response.json({ error: "Email backup harus berbeda dari email utama" }, { status: 400 });
+    }
+
     const existing = getUserByEmail(email);
     if (existing) {
       return Response.json({ error: "Email sudah terdaftar" }, { status: 409 });
+    }
+
+    const existingBackup = getUserByEmail(backupEmail);
+    if (existingBackup) {
+      return Response.json({ error: "Email backup sudah terdaftar" }, { status: 409 });
     }
 
     // Enforce role: only the designated email gets admin
@@ -30,6 +39,7 @@ export async function POST(request: NextRequest) {
       email,
       password: hashedPassword,
       role,
+      backupEmail,
       createdAt: new Date().toISOString(),
     });
 

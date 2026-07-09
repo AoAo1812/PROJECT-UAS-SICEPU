@@ -1,6 +1,7 @@
 import { NextRequest } from "next/server";
 import { getCurrentUser, hashPassword, verifyPassword } from "@/lib/auth";
 import { updateUser, getUserById } from "@/lib/db";
+import { verifyOTP } from "@/lib/otp-store";
 
 export async function PUT(request: NextRequest) {
   const payload = await getCurrentUser();
@@ -8,8 +9,8 @@ export async function PUT(request: NextRequest) {
     return Response.json({ error: "Tidak terautentikasi" }, { status: 401 });
   }
 
-  const { currentPassword, newPassword } = await request.json();
-  if (!currentPassword || !newPassword) {
+  const { currentPassword, newPassword, otpCode, otpEmail } = await request.json();
+  if (!currentPassword || !newPassword || !otpCode || !otpEmail) {
     return Response.json({ error: "Semua field harus diisi" }, { status: 400 });
   }
 
@@ -22,6 +23,13 @@ export async function PUT(request: NextRequest) {
     return Response.json({ error: "User tidak ditemukan" }, { status: 404 });
   }
 
+  // Verify OTP first
+  const otpResult = verifyOTP(otpEmail, otpCode);
+  if (!otpResult.valid) {
+    return Response.json({ error: otpResult.reason }, { status: 401 });
+  }
+
+  // Then verify current password
   const valid = await verifyPassword(currentPassword, user.password);
   if (!valid) {
     return Response.json({ error: "Password lama salah" }, { status: 401 });

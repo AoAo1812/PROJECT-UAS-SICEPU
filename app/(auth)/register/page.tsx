@@ -14,7 +14,7 @@ export default function RegisterPage() {
   const router = useRouter();
   const { t } = useTranslation();
   const [loading, setLoading] = useState(false);
-  const [form, setForm] = useState({ name: "", email: "", password: "", confirmPassword: "" });
+  const [form, setForm] = useState({ name: "", email: "", password: "", confirmPassword: "", backupEmail: "" });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -24,12 +24,18 @@ export default function RegisterPage() {
     if (form.password.length < 6) {
       return toast.error("Password minimal 6 karakter");
     }
+    if (!form.backupEmail) {
+      return toast.error("Email backup harus diisi");
+    }
+    if (form.email.toLowerCase() === form.backupEmail.toLowerCase()) {
+      return toast.error("Email backup harus berbeda dari email utama");
+    }
     setLoading(true);
     try {
       const res = await fetch("/api/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: form.name, email: form.email, password: form.password }),
+        body: JSON.stringify({ name: form.name, email: form.email, password: form.password, backupEmail: form.backupEmail }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error);
@@ -90,6 +96,17 @@ export default function RegisterPage() {
               onChange={(e) => setForm({ ...form, email: e.target.value })}
               required
             />
+            <div>
+              <Input
+                label={t("auth.backupEmail")}
+                type="email"
+                placeholder="backup@email.com"
+                value={form.backupEmail}
+                onChange={(e) => setForm({ ...form, backupEmail: e.target.value })}
+                required
+              />
+              <p className="text-[10px] text-[var(--foreground)]/40 mt-1">{t("auth.backupEmailHint")}</p>
+            </div>
             <Input
               label={t("auth.password")}
               type="password"

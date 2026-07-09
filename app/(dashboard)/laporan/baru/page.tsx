@@ -18,6 +18,15 @@ export default function BuatLaporanPage() {
     }
   }, [user, router]);
 
+  useEffect(() => {
+    if (window.location.hash === "#upload-foto") {
+      const el = document.getElementById("upload-foto");
+      if (el) {
+        setTimeout(() => el.scrollIntoView({ behavior: "smooth", block: "center" }), 300);
+      }
+    }
+  }, []);
+
   if (user?.role === "admin") return null;
 
   return (
