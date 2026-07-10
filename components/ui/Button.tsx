@@ -11,10 +11,10 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 
 const variants = {
   primary: "bg-gradient-to-r from-primary to-accent text-white shadow-lg shadow-primary/25 hover:shadow-primary/40 hover:brightness-110",
-  secondary: "bg-[var(--surface)] text-[var(--foreground)] hover:bg-[var(--surface)]/80 border border-[var(--border-color)]",
-  ghost: "text-[var(--foreground)]/60 hover:text-[var(--foreground)] hover:bg-[var(--surface)]",
-  danger: "bg-red-500/10 text-red-400 border border-red-500/20 hover:bg-red-500/20",
-  outline: "border border-[var(--border-color)] text-[var(--foreground)] hover:bg-[var(--surface)]",
+  secondary: "bg-[var(--surface)] text-stone-900 dark:text-white hover:bg-[var(--surface)]/80 border border-[var(--border-color)]",
+  ghost: "text-stone-600 dark:text-slate-300 hover:text-stone-900 dark:hover:text-white hover:bg-[var(--surface)]",
+  danger: "bg-red-500/10 text-red-600 dark:text-red-400 border border-red-500/20 hover:bg-red-500/20",
+  outline: "border border-[var(--border-color)] text-stone-900 dark:text-white hover:bg-[var(--surface)]",
 };
 
 const sizes = {

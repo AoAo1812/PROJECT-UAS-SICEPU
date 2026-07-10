@@ -15,112 +15,32 @@ interface TrackingReport {
   facilityName: string;
   location: string;
   category: string;
+  priority: string;
   status: "Menunggu" | "Diproses" | "Selesai" | "Ditolak";
-  createdAt: string;
-  updatedAt: string;
   description: string;
   adminNote: string;
-  timeline: { status: string; date: string; note?: string }[];
+  createdAt: string;
+  updatedAt: string;
 }
-
-const dummyReports: TrackingReport[] = [
-  {
-    id: "RPT-001",
-    facilityName: "Proyektor Ruang 301",
-    location: "Gedung Teknik Lantai 3",
-    category: "Peralatan",
-    status: "Diproses",
-    createdAt: "2026-07-01T08:30:00Z",
-    updatedAt: "2026-07-03T14:20:00Z",
-    description: "Proyektor tidak menampilkan gambar dengan jelas, gambar buram dan berkedip.",
-    adminNote: "Tim teknis sudah dihubungi, pengecekan dijadwalkan besok.",
-    timeline: [
-      { status: "Menunggu", date: "2026-07-01T08:30:00Z", note: "Laporan diterima sistem" },
-      { status: "Diproses", date: "2026-07-03T14:20:00Z", note: "Tim teknis ditugaskan" },
-    ],
-  },
-  {
-    id: "RPT-002",
-    facilityName: "AC Ruang Dosen",
-    location: "Gedung Fakultas Lantai 2",
-    category: "Fasilitas Ruangan",
-    status: "Menunggu",
-    createdAt: "2026-07-05T10:15:00Z",
-    updatedAt: "2026-07-05T10:15:00Z",
-    description: "AC tidak dingin dan mengeluarkan suara bising.",
-    adminNote: "",
-    timeline: [
-      { status: "Menunggu", date: "2026-07-05T10:15:00Z", note: "Laporan diterima sistem" },
-    ],
-  },
-  {
-    id: "RPT-003",
-    facilityName: "Lampu Koridor",
-    location: "Gedung Utama Lantai 1",
-    category: "Listrik & Air",
-    status: "Selesai",
-    createdAt: "2026-06-20T09:00:00Z",
-    updatedAt: "2026-06-25T16:00:00Z",
-    description: "3 lampu di koridor lantai 1 mati total.",
-    adminNote: "Lampu sudah diganti. Mohon dicek kembali.",
-    timeline: [
-      { status: "Menunggu", date: "2026-06-20T09:00:00Z", note: "Laporan diterima sistem" },
-      { status: "Diproses", date: "2026-06-21T08:00:00Z", note: "Tim listrik ditugaskan" },
-      { status: "Selesai", date: "2026-06-25T16:00:00Z", note: "Lampu sudah diganti" },
-    ],
-  },
-  {
-    id: "RPT-004",
-    facilityName: "WiFi Lab Komputer",
-    location: "Lab Komputer Lantai 2",
-    category: "Jaringan & Internet",
-    status: "Selesai",
-    createdAt: "2026-06-15T13:45:00Z",
-    updatedAt: "2026-06-18T11:30:00Z",
-    description: "Koneksi WiFi sangat lambat dan sering putus.",
-    adminNote: "Router sudah di-restart dan firmware di-update.",
-    timeline: [
-      { status: "Menunggu", date: "2026-06-15T13:45:00Z", note: "Laporan diterima sistem" },
-      { status: "Diproses", date: "2026-06-16T09:00:00Z", note: "Tim IT mengecek jaringan" },
-      { status: "Selesai", date: "2026-06-18T11:30:00Z", note: "Router di-restart, firmware di-update" },
-    ],
-  },
-  {
-    id: "RPT-005",
-    facilityName: "Kursi Ruang Seminar",
-    location: "Gedung Serbaguna",
-    category: "Furniture",
-    status: "Ditolak",
-    createdAt: "2026-06-28T07:20:00Z",
-    updatedAt: "2026-06-29T09:10:00Z",
-    description: "Beberapa kursi rusak dan tidak bisa dilipat.",
-    adminNote: "Kerusakan dikategorikan sebagai normal wear, tidak termasuk cakupan perbaikan.",
-    timeline: [
-      { status: "Menunggu", date: "2026-06-28T07:20:00Z", note: "Laporan diterima sistem" },
-      { status: "Ditolak", date: "2026-06-29T09:10:00Z", note: "Normal wear, di luar cakupan" },
-    ],
-  },
-];
 
 export default function TrackingPage() {
   const { t } = useTranslation();
-  const [reports] = useState<TrackingReport[]>(dummyReports);
-  const [selected, setSelected] = useState<TrackingReport | null>(dummyReports[0]);
+  const [reports, setReports] = useState<TrackingReport[]>([]);
+  const [selected, setSelected] = useState<TrackingReport | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const timer = setTimeout(() => setLoading(false), 600);
-    return () => clearTimeout(timer);
+    fetch("/api/reports?limit=50")
+      .then((r) => r.json())
+      .then((data) => {
+        const list = data.reports || [];
+        setReports(list);
+        if (list.length > 0) setSelected(list[0]);
+      })
+      .finally(() => setLoading(false));
   }, []);
 
   const statusColors: Record<string, string> = {
-    Menunggu: "bg-amber-500",
-    Diproses: "bg-blue-500",
-    Selesai: "bg-emerald-500",
-    Ditolak: "bg-red-500",
-  };
-
-  const statusDotColors: Record<string, string> = {
     Menunggu: "bg-amber-500",
     Diproses: "bg-blue-500",
     Selesai: "bg-emerald-500",
@@ -184,7 +104,7 @@ export default function TrackingPage() {
                 <Badge status={r.status} />
               </div>
               <div className="flex items-center gap-2 text-xs text-slate-400 dark:text-slate-500">
-                <span className="font-mono">{r.id}</span>
+                <span className="font-mono">{r.id.slice(0, 8)}</span>
                 <span>&middot;</span>
                 <span>{new Date(r.createdAt).toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "numeric" })}</span>
               </div>
@@ -206,7 +126,7 @@ export default function TrackingPage() {
                 <Card className="p-6">
                   <div className="flex items-start justify-between mb-6">
                     <div>
-                      <p className="text-xs font-mono text-slate-400 dark:text-slate-500 mb-1">{selected.id}</p>
+                      <p className="text-xs font-mono text-slate-400 dark:text-slate-500 mb-1">{selected.id.slice(0, 8)}</p>
                       <h3 className="text-lg font-bold text-slate-900 dark:text-white">{selected.facilityName}</h3>
                       <p className="text-sm text-slate-500 dark:text-slate-400">{selected.location}</p>
                     </div>
@@ -250,27 +170,42 @@ export default function TrackingPage() {
                   <div>
                     <h4 className="text-sm font-semibold text-slate-900 dark:text-white mb-4">{t("tracking.timeline")}</h4>
                     <div className="space-y-0">
-                      {selected.timeline.map((item, i) => (
-                        <div key={i} className="flex gap-4">
+                      <div className="flex gap-4">
+                        <div className="flex flex-col items-center">
+                          <div className={`w-3 h-3 rounded-full ${statusColors["Menunggu"]} mt-1.5 shrink-0`} />
+                          <div className="w-0.5 flex-1 bg-slate-200 dark:bg-slate-800 mt-1" />
+                        </div>
+                        <div className="pb-6 pt-0.5">
+                          <div className="flex items-center gap-2 mb-1">
+                            <Badge status="Menunggu" />
+                            <span className="text-xs text-slate-400 dark:text-slate-500">
+                              {new Date(selected.createdAt).toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" })}
+                            </span>
+                          </div>
+                          <p className="text-sm text-slate-600 dark:text-slate-400">Laporan diterima sistem</p>
+                        </div>
+                      </div>
+
+                      {(selected.status === "Diproses" || selected.status === "Selesai" || selected.status === "Ditolak") && (
+                        <div className="flex gap-4">
                           <div className="flex flex-col items-center">
-                            <div className={`w-3 h-3 rounded-full ${statusDotColors[item.status]} mt-1.5 shrink-0`} />
-                            {i < selected.timeline.length - 1 && (
-                              <div className="w-0.5 flex-1 bg-slate-200 dark:bg-slate-800 mt-1" />
-                            )}
+                            <div className={`w-3 h-3 rounded-full ${statusColors[selected.status]} mt-1.5 shrink-0`} />
                           </div>
                           <div className="pb-6 pt-0.5">
                             <div className="flex items-center gap-2 mb-1">
-                              <Badge status={item.status as "Menunggu" | "Diproses" | "Selesai" | "Ditolak"} />
+                              <Badge status={selected.status} />
                               <span className="text-xs text-slate-400 dark:text-slate-500">
-                                {new Date(item.date).toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" })}
+                                {new Date(selected.updatedAt).toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" })}
                               </span>
                             </div>
-                            {item.note && (
-                              <p className="text-sm text-slate-600 dark:text-slate-400">{item.note}</p>
-                            )}
+                            <p className="text-sm text-slate-600 dark:text-slate-400">
+                              {selected.status === "Diproses" && "Tim teknis ditugaskan"}
+                              {selected.status === "Selesai" && "Laporan selesai ditangani"}
+                              {selected.status === "Ditolak" && "Laporan ditolak oleh admin"}
+                            </p>
                           </div>
                         </div>
-                      ))}
+                      )}
                     </div>
                   </div>
 

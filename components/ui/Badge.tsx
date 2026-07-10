@@ -4,10 +4,10 @@ interface BadgeProps {
 }
 
 const statusStyles: Record<string, string> = {
-  Menunggu: "bg-amber-500/10 text-amber-400 border border-amber-500/20",
-  Diproses: "bg-primary/10 text-primary border border-primary/20",
-  Selesai: "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20",
-  Ditolak: "bg-red-500/10 text-red-400 border border-red-500/20",
+  Menunggu: "bg-amber-500/10 text-amber-800 border border-amber-500/20",
+  Diproses: "bg-primary/10 text-primary-dark border border-primary/20",
+  Selesai: "bg-emerald-500/10 text-emerald-800 border border-emerald-500/20",
+  Ditolak: "bg-red-500/10 text-red-800 border border-red-500/20",
 };
 
 const statusDots: Record<string, string> = {

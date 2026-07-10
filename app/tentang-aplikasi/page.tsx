@@ -16,7 +16,6 @@ const features = [
   { icon: "M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z", title: "Layout Adaptif", desc: "Tampilan otomatis menyesuaikan ukuran layar tanpa mengorbankan fungsionalitas." },
   { icon: "M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z", title: "Touch-Friendly", desc: "Semua tombol dan interaksi dirancang nyaman untuk navigasi sentuh di layar kecil." },
   { icon: "M13 10V3L4 14h7v7l9-11h-7z", title: "Performa Cepat", desc: "Loading time minimal, konten kritis di-prioritaskan untuk pengalaman instan." },
-  { icon: "M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15", title: "Offline Ready", desc: "Mode caching memungkinkan akses data bahkan saat koneksi internet tidak stabil." },
 ];
 
 const faqItems = [
@@ -50,7 +49,7 @@ export default function TentangAplikasiPage() {
             className="text-4xl sm:text-5xl lg:text-6xl font-bold text-slate-900 dark:text-white tracking-tight mb-6"
           >
             Akses SICEPU dari{" "}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-400">
               Perangkat Apapun
             </span>
           </motion.h1>
@@ -58,7 +57,7 @@ export default function TentangAplikasiPage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.2 }}
-            className="text-lg text-slate-600 dark:text-slate-400 max-w-2xl mx-auto leading-relaxed"
+            className="text-lg text-slate-600 dark:text-slate-300 max-w-2xl mx-auto leading-relaxed"
           >
             SICEPU dirancang responsif untuk memberikan pengalaman terbaik di desktop, tablet, dan smartphone tanpa perlu aplikasi tambahan.
           </motion.p>
@@ -86,7 +85,7 @@ export default function TentangAplikasiPage() {
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                       </svg>
                     </div>
-                    <p className="text-xs font-semibold text-slate-600 dark:text-slate-300">SICEPU</p>
+                    <p className="text-xs font-semibold text-slate-600 dark:text-white">SICEPU</p>
                     <div className="mt-2 space-y-1">
                       <div className="h-1.5 w-20 mx-auto rounded-full bg-slate-300 dark:bg-slate-600" />
                       <div className="h-1.5 w-16 mx-auto rounded-full bg-slate-300 dark:bg-slate-600" />
@@ -98,7 +97,7 @@ export default function TentangAplikasiPage() {
                   <svg className="w-5 h-5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={device.icon} />
                   </svg>
-                  <p className="text-sm font-medium text-slate-700 dark:text-slate-300">{device.name}</p>
+                  <p className="text-sm font-medium text-slate-700 dark:text-white">{device.name}</p>
                 </div>
               </motion.div>
             ))}
@@ -117,7 +116,7 @@ export default function TentangAplikasiPage() {
             viewport={{ once: true }}
             className="text-center mb-16"
           >
-            <span className="text-sm font-semibold text-blue-600 dark:text-blue-400 mb-4 px-4 py-1.5 rounded-full bg-blue-50 dark:bg-blue-950/30 border border-blue-200/50 dark:border-blue-800/30 inline-block">
+            <span className="text-sm font-semibold text-blue-400 dark:text-blue-300 mb-4 px-4 py-1.5 rounded-full bg-blue-950/30 border border-blue-800/30 inline-block">
               Desain Responsif
             </span>
             <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 dark:text-white tracking-tight">
@@ -125,7 +124,7 @@ export default function TentangAplikasiPage() {
             </h2>
           </motion.div>
 
-          <div className="grid sm:grid-cols-2 gap-6">
+          <div className="grid sm:grid-cols-3 gap-6">
             {features.map((f, i) => (
               <motion.div
                 key={i}
@@ -141,8 +140,8 @@ export default function TentangAplikasiPage() {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d={f.icon} />
                   </svg>
                 </div>
-                <h3 className="text-base font-semibold text-slate-900 dark:text-white mb-2">{f.title}</h3>
-                <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">{f.desc}</p>
+                <h3 className="text-base font-semibold text-white dark:text-white mb-2">{f.title}</h3>
+                <p className="text-sm text-slate-300 dark:text-slate-300 leading-relaxed">{f.desc}</p>
               </motion.div>
             ))}
           </div>
@@ -159,7 +158,7 @@ export default function TentangAplikasiPage() {
             viewport={{ once: true }}
             className="text-center mb-12"
           >
-            <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 dark:text-white tracking-tight">
+            <h2 className="text-3xl sm:text-4xl font-bold text-white dark:text-white tracking-tight">
               Pertanyaan Umum
             </h2>
           </motion.div>
@@ -174,8 +173,8 @@ export default function TentangAplikasiPage() {
                 transition={{ delay: i * 0.05 }}
                 className="p-5 rounded-xl bg-white dark:bg-slate-900/60 border border-slate-200/80 dark:border-slate-800/80"
               >
-                <h3 className="text-sm font-semibold text-slate-900 dark:text-white mb-2">{item.q}</h3>
-                <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">{item.a}</p>
+                <h3 className="text-sm font-semibold text-white dark:text-white mb-2">{item.q}</h3>
+                <p className="text-sm text-slate-300 dark:text-slate-300 leading-relaxed">{item.a}</p>
               </motion.div>
             ))}
           </div>
@@ -191,7 +190,7 @@ export default function TentangAplikasiPage() {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-3xl sm:text-4xl font-bold text-slate-900 dark:text-white tracking-tight mb-6"
+            className="text-3xl sm:text-4xl font-bold text-white dark:text-white tracking-tight mb-6"
           >
             Siap Mencoba?
           </motion.h2>
@@ -200,7 +199,7 @@ export default function TentangAplikasiPage() {
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
             transition={{ delay: 0.1 }}
-            className="text-lg text-slate-600 dark:text-slate-400 mb-8"
+            className="text-lg text-slate-300 dark:text-slate-300 mb-8"
           >
             Akses SICEPU sekarang dari perangkat apapun yang Anda miliki.
           </motion.p>

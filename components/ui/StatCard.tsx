@@ -61,12 +61,12 @@ export default function StatCard({
       <div className={`absolute inset-0 bg-gradient-to-br ${c.bg} opacity-0 group-hover:opacity-100 transition-opacity duration-300`} />
       <div className="relative flex items-center justify-between">
         <div className="space-y-1">
-          <p className="text-xs font-medium text-[var(--foreground)]/60">{title}</p>
-          <p className="text-2xl font-bold text-[var(--foreground)] tracking-tight">
+          <p className="text-xs font-semibold text-stone-700">{title}</p>
+          <p className="text-2xl font-bold text-stone-900 tracking-tight">
             {typeof value === "number" ? value.toLocaleString() : value}
           </p>
           {trend && (
-            <p className="text-xs font-medium text-emerald-400">{trend}</p>
+            <p className="text-xs font-medium text-stone-600 dark:text-emerald-400">{trend}</p>
           )}
         </div>
         <div className={`w-10 h-10 rounded-lg bg-gradient-to-br ${c.iconBg} flex items-center justify-center text-white shadow-lg ${c.glow} group-hover:scale-110 transition-transform duration-300`}>

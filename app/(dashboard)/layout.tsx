@@ -50,7 +50,7 @@ export default function DashboardLayout({
           <div className="animate-pulse">
             <Logo size="md" showText={false} />
           </div>
-          <p className="text-xs text-[var(--foreground)]/40">{t("layout.loading")}</p>
+          <p className="text-xs text-stone-600">{t("layout.loading")}</p>
         </div>
       </div>
     );
@@ -70,7 +70,7 @@ export default function DashboardLayout({
         </div>
 
         <main className="flex-1 min-w-0 p-4 sm:p-6 overflow-x-hidden">
-          <button onClick={() => setMobileOpen(true)} className="lg:hidden fixed top-3 left-3 z-30 w-8 h-8 rounded-lg bg-[var(--surface)] border border-[var(--border-color)] shadow-lg flex items-center justify-center text-[var(--foreground)]/60 hover:text-[var(--foreground)] transition-colors">
+          <button onClick={() => setMobileOpen(true)} className="lg:hidden fixed top-3 left-3 z-30 w-8 h-8 rounded-lg bg-[var(--surface)] border border-[var(--border-color)] shadow-lg flex items-center justify-center text-stone-700 hover:text-stone-900 transition-colors">
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
             </svg>

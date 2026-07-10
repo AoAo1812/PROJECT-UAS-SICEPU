@@ -58,13 +58,13 @@ export default function Sidebar({ collapsed, onToggle, onClose }: { collapsed: b
         )}
         <div className="flex items-center gap-1">
           {onClose && (
-            <button onClick={onClose} className="lg:hidden p-1.5 rounded-lg hover:bg-[var(--surface)] transition-colors text-[var(--foreground)]/40">
+            <button onClick={onClose} className="lg:hidden p-1.5 rounded-lg hover:bg-[var(--surface)] transition-colors text-[var(--foreground)]/60">
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               </svg>
             </button>
           )}
-          <button onClick={onToggle} className="p-1.5 rounded-lg hover:bg-[var(--surface)] transition-colors text-[var(--foreground)]/40">
+          <button onClick={onToggle} className="p-1.5 rounded-lg hover:bg-[var(--surface)] transition-colors text-[var(--foreground)]/60">
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               {collapsed ? (
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 5l7 7-7 7M5 5l7 7-7 7" />
@@ -89,7 +89,7 @@ export default function Sidebar({ collapsed, onToggle, onClose }: { collapsed: b
         <Link
           href="/"
           onClick={onClose}
-          className="flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-sm text-[var(--foreground)]/60 hover:text-[var(--foreground)] hover:bg-[var(--surface)] transition-all"
+          className="flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-sm text-stone-700 hover:text-stone-900 hover:bg-[var(--surface)] transition-all"
         >
           <svg className="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
@@ -106,7 +106,7 @@ export default function Sidebar({ collapsed, onToggle, onClose }: { collapsed: b
               className={`flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-sm transition-all ${
                 active
                   ? "bg-primary/10 text-primary"
-                  : "text-[var(--foreground)]/60 hover:text-[var(--foreground)] hover:bg-[var(--surface)]"
+                  : "text-stone-700 hover:text-stone-900 hover:bg-[var(--surface)]"
               }`}
             >
               <svg className="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -122,7 +122,7 @@ export default function Sidebar({ collapsed, onToggle, onClose }: { collapsed: b
       <div className="p-2 border-t border-[var(--border-color)] space-y-0.5">
         <button
           onClick={toggle}
-          className="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-sm text-[var(--foreground)]/60 hover:text-[var(--foreground)] hover:bg-[var(--surface)] transition-all"
+          className="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-sm text-stone-700 hover:text-stone-900 hover:bg-[var(--surface)] transition-all"
         >
           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
@@ -135,7 +135,7 @@ export default function Sidebar({ collapsed, onToggle, onClose }: { collapsed: b
           <div className="relative">
             <button
               onClick={() => setLangOpen(!langOpen)}
-              className="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-sm text-[var(--foreground)]/60 hover:text-[var(--foreground)] hover:bg-[var(--surface)] transition-all"
+              className="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-sm text-stone-700 hover:text-stone-900 hover:bg-[var(--surface)] transition-all"
             >
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
@@ -157,7 +157,7 @@ export default function Sidebar({ collapsed, onToggle, onClose }: { collapsed: b
                       className={`w-full px-3 py-2 text-left text-sm transition-colors ${
                         locale === loc.value
                           ? "bg-primary/10 text-primary"
-                          : "text-[var(--foreground)]/60 hover:bg-[var(--background)]"
+                          : "text-stone-700 hover:bg-[var(--background)]"
                       }`}
                     >
                       {loc.label}
@@ -171,7 +171,7 @@ export default function Sidebar({ collapsed, onToggle, onClose }: { collapsed: b
 
         <button
           onClick={logout}
-          className="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-sm text-red-400 hover:bg-red-500/10 transition-all"
+          className="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-sm text-red-600 dark:text-red-400 hover:bg-red-500/10 transition-all"
         >
           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
@@ -183,8 +183,8 @@ export default function Sidebar({ collapsed, onToggle, onClose }: { collapsed: b
           <div className="flex items-center gap-2.5 px-2.5 py-2">
             <Avatar name={user.name} size="sm" src={user.avatar} />
             <div className="min-w-0">
-              <p className="text-xs font-medium text-[var(--foreground)] truncate">{user.name}</p>
-              <p className="text-[10px] text-[var(--foreground)]/30 truncate">
+              <p className="text-xs font-medium text-stone-900 truncate">{user.name}</p>
+              <p className="text-[10px] text-stone-600 truncate">
                 {user.role === "admin" ? t("sidebar.administrator") : t("sidebar.user")}
               </p>
             </div>

@@ -107,10 +107,10 @@ export default function DashboardPage() {
               </svg>
             </div>
             <div className="flex-1">
-              <p className="text-sm font-semibold text-amber-800 dark:text-amber-300">
+              <p className="text-sm font-semibold text-stone-900 dark:text-amber-300">
                 {t("dashboard.pendingAlert").replace("{n}", String(stats.menunggu))}
               </p>
-              <p className="text-xs text-amber-600 dark:text-amber-400/70">
+              <p className="text-xs text-stone-800 dark:text-amber-400/70">
                 {t("dashboard.pendingAlertDesc")}
               </p>
             </div>
@@ -135,10 +135,10 @@ export default function DashboardPage() {
               </svg>
             </div>
             <div className="flex-1">
-              <p className="text-sm font-semibold text-blue-800 dark:text-blue-300">
+              <p className="text-sm font-semibold text-stone-900 dark:text-blue-300">
                 {t("dashboard.processingAlert").replace("{n}", String(stats.diproses))}
               </p>
-              <p className="text-xs text-blue-600 dark:text-blue-400/70">
+              <p className="text-xs text-stone-800 dark:text-blue-400/70">
                 {t("dashboard.processingAlertDesc")}
               </p>
             </div>
@@ -153,7 +153,7 @@ export default function DashboardPage() {
       <div className="grid lg:grid-cols-3 gap-6 mb-8">
         <Card className="p-6 lg:col-span-2">
           <div className="flex items-center justify-between mb-6">
-            <h3 className="text-lg font-semibold text-slate-900 dark:text-white">{t("dashboard.chartTitle")}</h3>
+            <h3 className="text-lg font-semibold text-stone-900 dark:text-white">{t("dashboard.chartTitle")}</h3>
             <div className="flex items-center gap-1 p-1 rounded-lg bg-slate-100 dark:bg-slate-800">
               {(["weekly", "monthly", "yearly"] as const).map((p) => (
                 <button
@@ -161,8 +161,8 @@ export default function DashboardPage() {
                   onClick={() => setPeriod(p)}
                   className={`px-3 py-1 rounded-md text-xs font-medium transition-all ${
                     period === p
-                      ? "bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-sm"
-                      : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300"
+                      ? "bg-white dark:bg-slate-700 text-stone-900 dark:text-white shadow-sm"
+                      : "text-stone-600 dark:text-slate-400 hover:text-stone-900 dark:hover:text-slate-300"
                   }`}
                 >
                   {t(`dashboard.period.${p}`)}
@@ -178,7 +178,7 @@ export default function DashboardPage() {
         </Card>
 
         <Card className="p-6">
-          <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-6">{t("dashboard.statusChart")}</h3>
+          <h3 className="text-lg font-semibold text-stone-900 dark:text-white mb-6">{t("dashboard.statusChart")}</h3>
           {stats && (stats.menunggu + stats.diproses + stats.selesai + stats.ditolak) > 0 ? (
             <StatusChart
               data={[
@@ -198,7 +198,7 @@ export default function DashboardPage() {
       <div className="grid lg:grid-cols-2 gap-6">
         <Card className="p-6">
           <div className="flex items-center justify-between mb-6">
-            <h3 className="text-lg font-semibold text-slate-900 dark:text-white">{t("dashboard.recentReports")}</h3>
+            <h3 className="text-lg font-semibold text-stone-900 dark:text-white">{t("dashboard.recentReports")}</h3>
             <Link href="/laporan">
               <Button variant="ghost" size="sm">{t("dashboard.viewAll")}</Button>
             </Link>
@@ -210,7 +210,7 @@ export default function DashboardPage() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                 </svg>
               </div>
-              <p className="text-sm font-medium text-slate-500 dark:text-slate-400 mb-3">{t("dashboard.noReports")}</p>
+              <p className="text-sm font-medium text-stone-700 dark:text-slate-400 mb-3">{t("dashboard.noReports")}</p>
               <Link href="/laporan/baru">
                 <Button size="sm">
                   <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -235,8 +235,8 @@ export default function DashboardPage() {
                       </svg>
                     </div>
                     <div className="min-w-0">
-                      <p className="text-sm font-medium text-slate-900 dark:text-white truncate">{r.facilityName}</p>
-                      <p className="text-xs text-slate-500 dark:text-slate-400 truncate">{r.location}</p>
+                      <p className="text-sm font-medium text-stone-900 dark:text-white truncate">{r.facilityName}</p>
+                      <p className="text-xs text-stone-600 dark:text-slate-400 truncate">{r.location}</p>
                     </div>
                   </div>
                   <Badge status={r.status} />
@@ -249,7 +249,7 @@ export default function DashboardPage() {
         {/* Activity Timeline */}
         <Card className="p-6">
           <div className="flex items-center justify-between mb-6">
-            <h3 className="text-lg font-semibold text-slate-900 dark:text-white">{t("dashboard.recentActivity")}</h3>
+            <h3 className="text-lg font-semibold text-stone-900 dark:text-white">{t("dashboard.recentActivity")}</h3>
           </div>
           {recent.length === 0 ? (
             <div className="text-center py-8">
@@ -258,7 +258,7 @@ export default function DashboardPage() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
               </div>
-              <p className="text-sm text-slate-500 dark:text-slate-400">{t("dashboard.noActivity")}</p>
+              <p className="text-sm text-stone-700 dark:text-slate-400">{t("dashboard.noActivity")}</p>
             </div>
           ) : (
             <div className="space-y-0">
@@ -285,11 +285,11 @@ export default function DashboardPage() {
                       )}
                     </div>
                     <div className="pb-5 pt-0.5">
-                      <p className="text-sm text-slate-700 dark:text-slate-300">
-                        <span className="font-medium text-slate-900 dark:text-white">{r.facilityName}</span>
+                      <p className="text-sm text-stone-800 dark:text-slate-300">
+                        <span className="font-medium text-stone-900 dark:text-white">{r.facilityName}</span>
                         {" "}{statusText[r.status]}
                       </p>
-                      <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                      <p className="text-xs text-stone-600 dark:text-slate-400 mt-0.5">
                         {new Date(r.createdAt).toLocaleDateString("id-ID", {
                           day: "numeric",
                           month: "short",
